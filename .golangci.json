@@ -44,13 +44,15 @@
 	},
 	"linters": {
 		"disable": [
+			"err113",
 			"gochecknoglobals",
+			"gochecknoinits",
 			"gocritic",
 			"godot",
-			"recvcheck",
-			"inamedparam",
 			"godox",
-			"err113"
+			"inamedparam",
+			"makezero",
+			"recvcheck"
 		],
 		"enable": [
 			"asasalint",
@@ -68,14 +70,12 @@
 			"exhaustive",
 			"forbidigo",
 			"gocheckcompilerdirectives",
-			"gochecknoinits",
 			"gochecksumtype",
 			"goheader",
 			"gomoddirectives",
 			"gosec",
 			"gosmopolitan",
 			"loggercheck",
-			"makezero",
 			"mirror",
 			"misspell",
 			"musttag",
