@@ -50,7 +50,7 @@ func BuildCoinbase(c1 []byte, c2 []byte, extraNonce1 string, extraNonce2 string)
 	e1, _ := hex.DecodeString(extraNonce1)
 	e2, _ := hex.DecodeString(extraNonce2)
 
-	a := []byte{}
+	var a []byte
 	a = append(a, c1...)
 	a = append(a, e1...)
 	a = append(a, e2...)
@@ -137,7 +137,7 @@ func makeCoinbase1(height uint32, coinbaseText string) []byte {
 	buf := make([]byte, 4)
 	binary.LittleEndian.PutUint32(buf, 1) // Version
 
-	buf = append(buf, 0x01)                              // Number of input transaction - always one
+	buf = append(buf, 0x01)                              // Number of input transactions - always one
 	buf = append(buf, make([]byte, 32)...)               // Transaction hash - 4 bytes all bits are zero
 	buf = append(buf, []byte{0xff, 0xff, 0xff, 0xff}...) // Coinbase data size - 4 bytes - All bits are ones: 0xFFFFFFFF (ffffffff)
 

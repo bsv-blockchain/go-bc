@@ -59,7 +59,7 @@ func GetMerkleBranches(template []string) []string {
 }
 
 // MerkleRootFromBranches returns a Merkle root given a transaction hash (txid), the index in
-// which it is positioned in the Merkle tree, and the branches needed along the way (Merkle path).
+// which it is positioned in the Merkle tree, and the branches needed along the way (a Merkle path).
 func MerkleRootFromBranches(txHash string, txIndex int, branches []string) (string, error) {
 	hash, err := hex.DecodeString(txHash)
 	if err != nil {

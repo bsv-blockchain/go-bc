@@ -6,7 +6,7 @@ import (
 	"github.com/bsv-blockchain/go-bt/v2"
 )
 
-// A MerkleProof is a structure that proves inclusion of a
+// A MerkleProof is a structure that proves the inclusion of a
 // Bitcoin transaction in a block.
 type MerkleProof struct {
 	Index      uint64   `json:"index"`
@@ -18,7 +18,7 @@ type MerkleProof struct {
 	Composite  bool     `json:"composite,omitempty"`
 }
 
-// Bytes converts the JSON Merkle Proof
+// Bytes convert the JSON Merkle Proof
 // into byte encoding.
 //
 // Check the following encoding:
@@ -47,7 +47,7 @@ func (mp *MerkleProof) Bytes() ([]byte, error) {
 
 	nodeCount := len(mp.Nodes)
 
-	nodes := []byte{}
+	var nodes []byte
 
 	for _, n := range mp.Nodes {
 		if n == "*" {
@@ -68,7 +68,7 @@ func (mp *MerkleProof) Bytes() ([]byte, error) {
 
 	var txLength []byte
 	if len(mp.TxOrID) > 64 { // tx bytes instead of txid
-		// set bit at index 0
+		// set a bit at index 0
 		flags |= 1 << 0
 
 		txLength = bt.VarInt(uint64(len(txOrID))).Bytes()
@@ -78,13 +78,13 @@ func (mp *MerkleProof) Bytes() ([]byte, error) {
 		// set bit at index 1
 		flags |= 1 << 1
 	} else if mp.TargetType == "merkleRoot" {
-		// set bit at index 2
+		// set a bit at index 2
 		flags |= 1 << 2
 	}
 
 	// ignore proofType and compositeType for this version
 
-	bytes := []byte{}
+	var bytes []byte
 	bytes = append(bytes, flags)
 	bytes = append(bytes, index.Bytes()...)
 	bytes = append(bytes, txLength...)

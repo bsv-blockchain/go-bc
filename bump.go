@@ -28,8 +28,8 @@ type leaf struct {
 	Duplicate *bool   `json:"duplicate,omitempty"`
 }
 
-// NewBUMPFromStream takes an array of bytes and contructs a BUMP from it, returning the BUMP
-// and the bytes used. Despite the name, this is not actually reading a stream in the true sense:
+// NewBUMPFromStream takes an array of bytes and contracts a BUMP from it, returning the BUMP
+// and the bytes used. Despite the name, this is not reading a stream in the true sense:
 // it is a byte slice that contains many BUMPs one after another.
 func NewBUMPFromStream(bytes []byte) (*BUMP, int, error) {
 	if len(bytes) < 37 {
@@ -37,13 +37,13 @@ func NewBUMPFromStream(bytes []byte) (*BUMP, int, error) {
 	}
 	bump := &BUMP{}
 
-	// first bytes are the block height.
+	// the first bytes are the block height.
 	var skip int
 	index, size := bt.NewVarIntFromBytes(bytes[skip:])
 	skip += size
 	bump.BlockHeight = uint64(index)
 
-	// Next byte is the tree height.
+	// The Next byte is the tree height.
 	treeHeight := uint(bytes[skip])
 	skip++
 
@@ -127,7 +127,7 @@ func NewBUMPFromJSON(jsonStr string) (*BUMP, error) {
 
 // Bytes encodes a BUMP as a slice of bytes. BUMP Binary Format according to BRC-74 https://brc.dev/74
 func (bump *BUMP) Bytes() ([]byte, error) {
-	bytes := []byte{}
+	var bytes []byte
 	bytes = append(bytes, bt.VarInt(bump.BlockHeight).Bytes()...)
 	treeHeight := len(bump.Path)
 	bytes = append(bytes, byte(treeHeight))
@@ -176,7 +176,7 @@ func (bump *BUMP) Txids() []string {
 // CalculateRootGivenTxid calculates the root of the Merkle tree given a txid.
 func (bump *BUMP) CalculateRootGivenTxid(txid string) (string, error) {
 	if len(bump.Path) == 1 {
-		// if there is only one txid in the block then the root is the txid.
+		// if there is only one txid in the block, then the root is the txid.
 		if len(bump.Path[0]) == 1 {
 			return txid, nil
 		}
@@ -228,7 +228,7 @@ func (bump *BUMP) CalculateRootGivenTxid(txid string) (string, error) {
 	return StringFromBytesReverse(workingHash), nil
 }
 
-// NewBUMPFromMerkleTreeAndIndex with merkle tree we calculate the merkle path for a given transaction.
+// NewBUMPFromMerkleTreeAndIndex with a merkle tree we calculate the merkle path for a given transaction.
 func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.Hash, txIndex uint64) (*BUMP, error) {
 	if len(merkleTree) == 0 {
 		return nil, errors.New("merkle tree is empty")
@@ -279,7 +279,7 @@ func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.H
 		numOfHashes >>= 1
 	}
 	if oddTxIndex {
-		// if the txIndex is odd we need to add the txid to the path.
+		// if the txIndex is odd, we need to add the txid to the path.
 		bump.Path[0] = append(bump.Path[0], txidLeaf)
 	} else {
 		// otherwise prepend it.

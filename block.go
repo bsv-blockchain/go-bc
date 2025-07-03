@@ -9,11 +9,11 @@ import (
 )
 
 /*
-Field 													Purpose 									 														Size (Bytes)
-----------------------------------------------------------------------------------------------------
-block_header 					Block Header				 																									80
-txn_count 						Total number of txs in this block, including the coinbase tx 	 				VarInt
-txns 									Every tx in this block, one after another, in raw tx format 	 				-
+| Field        | Purpose                                                    | Size (Bytes) |
+|--------------|------------------------------------------------------------|--------------|
+| block_header | Block Header                                               | 80           |
+| txn_count    | Total number of txs in this block, including coinbase tx   | VarInt       |
+| txs          | Every tx in this block, one after another, in raw tx format| -            |
 */
 
 // A Block in the Bitcoin blockchain.
@@ -31,7 +31,7 @@ func (b *Block) String() string {
 //
 // See https://btcinformation.org/en/developer-reference#serialized-blocks
 func (b *Block) Bytes() []byte {
-	bytes := []byte{}
+	var bytes []byte
 
 	bytes = append(bytes, b.BlockHeader.Bytes()...)
 

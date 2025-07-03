@@ -16,7 +16,7 @@ Field 													Purpose 									 														Size (Bytes)
 ----------------------------------------------------------------------------------------------------
 Version 							Block version number 																									4
 hashPrevBlock 				256-bit hash of the previous block header 	 													32
-hashMerkleRoot 				256-bit hash based on all of the transactions in the block 	 					32
+hashMerkleRoot 				256-bit hash based on all the transactions in the block 	 					32
 Time 									Current block timestamp as seconds since 1970-01-01T00:00 UTC 				4
 Bits 									Current target in compact format 	 																		4
 Nonce 								32-bit number (starts at 0) 	 																				4
@@ -66,7 +66,7 @@ func (bh *BlockHeader) String() string {
 //
 // See https://en.bitcoin.it/wiki/Block_hashing_algorithm
 func (bh *BlockHeader) Bytes() []byte {
-	bytes := []byte{}
+	var bytes []byte
 	bytes = append(bytes, UInt32ToBytes(bh.Version)...)
 	bytes = append(bytes, bt.ReverseBytes(bh.HashPrevBlock)...)
 	bytes = append(bytes, bt.ReverseBytes(bh.HashMerkleRoot)...)
@@ -150,7 +150,7 @@ func (bh *BlockHeader) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// UnmarshalJSON unmarshals a JSON []byte into the receiving bc.BlockHeader.
+// UnmarshalJSON unmarshal a JSON []byte into the receiving bc.BlockHeader.
 func (bh *BlockHeader) UnmarshalJSON(b []byte) error {
 	var bhj bhJSON
 	if err := json.Unmarshal(b, &bhj); err != nil {

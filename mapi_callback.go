@@ -16,7 +16,7 @@ type MapiCallback struct {
 	CallbackReason  string `json:"callbackReason"`
 }
 
-// NewMapiCallbackFromBytes is a glorified json unmarshaller, but might be more sophisticated in future.
+// NewMapiCallbackFromBytes is a glorified JSON unmarshaller, but might be more sophisticated in the future.
 func NewMapiCallbackFromBytes(b []byte) (*MapiCallback, error) {
 	var mapiCallback MapiCallback
 	err := json.Unmarshal(b, &mapiCallback)
@@ -26,10 +26,10 @@ func NewMapiCallbackFromBytes(b []byte) (*MapiCallback, error) {
 	return &mapiCallback, nil
 }
 
-// Bytes converts the MapiCallback struct into a binary format.
-// We are not going to parse anything out but rather take the whole json object as a binary blob.
-// The reason behind this approach is that the whole callback is signed by the mapi server,
-// so if a single byte is out of place the signature will be invalid.
+// Bytes convert the MapiCallback struct into a binary format.
+// We are not going to parse anything out but rather take the whole JSON object as a binary blob.
+// The reason behind this approach is that the mapi server signs the whole callback,
+// so if a single byte is out of place, the signature will be invalid.
 func (mcb *MapiCallback) Bytes() ([]byte, error) {
 	return json.Marshal(mcb)
 }

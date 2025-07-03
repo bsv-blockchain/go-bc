@@ -11,12 +11,14 @@ import (
 // implement `Interface` in sort package.
 type sortByteArrays [][]byte
 
+// Len returns the length of the byte arrays slice.
 func (b sortByteArrays) Len() int {
 	return len(b)
 }
 
+// Less compares two byte arrays and returns true if the first is less than the second.
 func (b sortByteArrays) Less(i, j int) bool {
-	// bytes package already implements Comparable for []byte.
+	// byte package already implements Comparable for []byte.
 	switch bytes.Compare(b[i], b[j]) {
 	case -1:
 		return true
@@ -28,6 +30,7 @@ func (b sortByteArrays) Less(i, j int) bool {
 	}
 }
 
+// Swap swaps two byte arrays in the slice.
 func (b sortByteArrays) Swap(i, j int) {
 	b[j], b[i] = b[i], b[j]
 }
@@ -67,7 +70,7 @@ func Equals(b1 []byte, b2 []byte) bool {
 	return true
 }
 
-// Decode32Byte decodes a hex string into a 32 byte array.
+// Decode32Byte decodes a hex string into a 32-byte array.
 func Decode32Byte(hexStr string) ([32]byte, error) {
 	var b32 [32]byte
 	b, err := hex.DecodeString(hexStr)
@@ -80,7 +83,7 @@ func Decode32Byte(hexStr string) ([32]byte, error) {
 	return b32, nil
 }
 
-// UInt32ToBytes converts a uint32 into an
+// UInt32ToBytes converts an uint32 into an
 // array of bytes.
 func UInt32ToBytes(num uint32) []byte {
 	t := make([]byte, 4)

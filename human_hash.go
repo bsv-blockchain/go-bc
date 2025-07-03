@@ -2,7 +2,7 @@ package bc
 
 import "fmt"
 
-// HumanHash returns a human readable hash/second value from a very large number.
+// HumanHash returns a human-readable hash/second value from a very large number.
 func HumanHash(val float64) string {
 	unit := "H/s"
 
