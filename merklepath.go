@@ -23,7 +23,7 @@ func NewMerklePathFromBytes(bytes []byte) (*MerklePath, error) {
 	offset += size
 	mp.Index = uint64(index)
 
-	// next value in the byte array is nLeaves (number of leaves in merkle path).
+	// the next value in the byte array is nLeaves (number of leaves in a merkle path).
 	nLeaves, size := bt.NewVarIntFromBytes(bytes[offset:])
 	offset += size
 
@@ -51,14 +51,14 @@ func (mp *MerklePath) Bytes() ([]byte, error) {
 	index := bt.VarInt(mp.Index)
 	nLeaves := bt.VarInt(len(mp.Path))
 
-	// first two arguments in merkle path bynary format are index of the transaction and number of leaves.
-	bytes := []byte{}
+	// the first two arguments in merkle path binary format are index of the transaction and number of leaves.
+	var bytes []byte
 	bytes = append(bytes, index.Bytes()...)
 	bytes = append(bytes, nLeaves.Bytes()...)
 
 	// now add each leaf into the binary path.
 	for _, leaf := range mp.Path {
-		// append leaf bytes into binary path, little endian.
+		// append leaf bytes into a binary path, little endian.
 		bytes = append(bytes, BytesFromStringReverse(leaf)...)
 	}
 
@@ -83,7 +83,7 @@ func (mp *MerklePath) CalculateRoot(txid string) (string, error) {
 	for _, leaf := range mp.Path {
 		var digest []byte
 		leafBytes := BytesFromStringReverse(leaf)
-		// if the least significant bit is 1 then the working hash is on the right.
+		// if the least significant bit is 1, then the working hash is on the right.
 		if lsb&1 > 0 {
 			digest = append(leafBytes, workingHash...)
 		} else {
@@ -97,7 +97,7 @@ func (mp *MerklePath) CalculateRoot(txid string) (string, error) {
 
 // getPathElements traverses the tree and returns the path to Merkle root.
 func getPathElements(txIndex int, hashes []string) []string {
-	// if our hash index is odd the next hash of the path is the previous element in the array otherwise the next element.
+	// if our hash index is odd, the next hash of the path is the previous element in the array, otherwise the next element.
 	var path []string
 	var hash string
 	if txIndex%2 == 0 {
@@ -106,7 +106,7 @@ func getPathElements(txIndex int, hashes []string) []string {
 		hash = hashes[txIndex-1]
 	}
 
-	// when generating path if the neighbour is empty we append itself
+	// when generating a path if the neighbor is empty, we append itself
 	if hash == "" {
 		path = append(path, hashes[txIndex])
 	} else {
@@ -121,14 +121,14 @@ func getPathElements(txIndex int, hashes []string) []string {
 	return append(path, getPathElements(txIndex/2, hashes[(len(hashes)+1)/2:])...)
 }
 
-// GetTxMerklePath with merkle tree we calculate the merkle path for a given transaction.
+// GetTxMerklePath with a merkle tree we calculate the merkle path for a given transaction.
 func GetTxMerklePath(txIndex int, merkleTree []string) *MerklePath {
 	merklePath := &MerklePath{
 		Index: uint64(txIndex),
 		Path:  nil,
 	}
 
-	// if we have only one transaction in the block there is no merkle path to calculate
+	// if we have only one transaction in the block, there is no merkle path to calculate
 	if len(merkleTree) != 1 {
 		merklePath.Path = getPathElements(txIndex, merkleTree)
 	}

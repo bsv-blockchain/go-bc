@@ -53,7 +53,7 @@ func TestExpandTargetFrom_InvalidBits(t *testing.T) {
 
 func BenchmarkExpandTargetFrom(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		bc.ExpandTargetFrom("182815ee")
+		_, _ = bc.ExpandTargetFrom("182815ee")
 	}
 }
 

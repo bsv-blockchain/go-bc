@@ -54,7 +54,8 @@ func (v *verifier) VerifyMerkleProof(ctx context.Context, proof []byte) (*Merkle
 	// if bits 1 and 2 of flags are NOT set, target should contain a block hash (32 bytes)
 	case 0:
 		// The `target` field contains a block hash
-		blockHeader, err := v.bhc.BlockHeader(ctx, mpb.target)
+		var blockHeader *bc.BlockHeader
+		blockHeader, err = v.bhc.BlockHeader(ctx, mpb.target)
 		if err != nil {
 			return response, err
 		}
@@ -69,7 +70,6 @@ func (v *verifier) VerifyMerkleProof(ctx context.Context, proof []byte) (*Merkle
 	// if bit 1 of flags is set, target should contain a block header (80 bytes)
 	case 2:
 		// The `target` field contains a block header
-		var err error
 		merkleRoot, err = bc.ExtractMerkleRootFromBlockHeader(mpb.target)
 		if err != nil {
 			return response, err

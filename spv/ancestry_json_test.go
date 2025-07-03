@@ -3,7 +3,7 @@ package spv
 import (
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -218,7 +218,7 @@ var tests = map[string]struct {
 	},
 }
 
-func TestEnvelope_IsAnchored(t *testing.T) {
+func TestEnvelopeIsAnchored(t *testing.T) {
 	tests := map[string]struct {
 		ancestry AncestryJSON
 		exp      bool
@@ -242,7 +242,7 @@ func TestEnvelope_IsAnchored(t *testing.T) {
 	}
 }
 
-func TestEnvelope_Bytes_IsValid(t *testing.T) {
+func TestEnvelopeBytesIsValid(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			j := []byte(test.jsonString)
@@ -298,25 +298,25 @@ func TestEnvelope_Bytes_IsValid(t *testing.T) {
 	}
 }
 
-func benchmarkCrunchyNutEnvelopeCerealize(b *testing.B, envelope *Envelope) {
+func benchmarkCrunchyNutEnvelopeSerialize(b *testing.B, envelope *Envelope) {
 	for n := 0; n < b.N; n++ {
 		_, err := envelope.SpecialKBytes()
 		if err != nil {
-			fmt.Print(err)
+			log.Print(err)
 		}
 	}
 }
 
-func benchmarkCrunchyNutEnvelopeDecerealize(b *testing.B, binary []byte) {
+func benchmarkCrunchyNutEnvelopeDeserialize(b *testing.B, binary []byte) {
 	for n := 0; n < b.N; n++ {
 		_, err := NewCrunchyNutEnvelopeFromBytes(binary)
 		if err != nil {
-			fmt.Print(err)
+			log.Print(err)
 		}
 	}
 }
 
-func BenchmarkCerealizeCrunchyNut(b *testing.B) {
+func BenchmarkSerializeCrunchyNut(b *testing.B) {
 	for _, test := range tests {
 		j := []byte(test.jsonString)
 		var e Envelope
@@ -324,39 +324,39 @@ func BenchmarkCerealizeCrunchyNut(b *testing.B) {
 		if err != nil {
 			require.EqualError(b, err, "Couldn't decode jsonString")
 		}
-		benchmarkCrunchyNutEnvelopeCerealize(b, &e)
+		benchmarkCrunchyNutEnvelopeSerialize(b, &e)
 	}
 }
 
-func BenchmarkDecerealizeCrunchyNut(b *testing.B) {
+func BenchmarkDeserializeCrunchyNut(b *testing.B) {
 	for _, test := range tests {
 		binary, err := hex.DecodeString(test.crunchyNutHexString)
 		if err != nil {
 			require.EqualError(b, err, "Couldn't decode hexString")
 		}
-		benchmarkCrunchyNutEnvelopeDecerealize(b, binary)
+		benchmarkCrunchyNutEnvelopeDeserialize(b, binary)
 	}
 }
 
-func benchmarkSpecialKEnvelopeCerealize(b *testing.B, envelope *Envelope) {
+func benchmarkSpecialKEnvelopeSerialize(b *testing.B, envelope *Envelope) {
 	for n := 0; n < b.N; n++ {
 		_, err := envelope.SpecialKBytes()
 		if err != nil {
-			fmt.Print(err)
+			log.Print(err)
 		}
 	}
 }
 
-func benchmarkSpecialKEnvelopeDecerealize(b *testing.B, binary []byte) {
+func benchmarkSpecialKEnvelopeDeserialize(b *testing.B, binary []byte) {
 	for n := 0; n < b.N; n++ {
 		_, err := NewSpecialKEnvelopeFromBytes(binary)
 		if err != nil {
-			fmt.Print(err)
+			log.Print(err)
 		}
 	}
 }
 
-func BenchmarkCerealizeSpecialK(b *testing.B) {
+func BenchmarkSerializeSpecialK(b *testing.B) {
 	for _, test := range tests {
 		j := []byte(test.jsonString)
 		var e Envelope
@@ -364,15 +364,15 @@ func BenchmarkCerealizeSpecialK(b *testing.B) {
 		if err != nil {
 			require.EqualError(b, err, "Couldn't decode jsonString")
 		}
-		benchmarkSpecialKEnvelopeCerealize(b, &e)
+		benchmarkSpecialKEnvelopeSerialize(b, &e)
 	}
 }
-func BenchmarkDecerealizeSpecialK(b *testing.B) {
+func BenchmarkDeserializeSpecialK(b *testing.B) {
 	for _, test := range tests {
 		binary, err := hex.DecodeString(test.specialKHexString)
 		if err != nil {
 			require.EqualError(b, err, "Couldn't decode hexString")
 		}
-		benchmarkSpecialKEnvelopeDecerealize(b, binary)
+		benchmarkSpecialKEnvelopeDeserialize(b, binary)
 	}
 }

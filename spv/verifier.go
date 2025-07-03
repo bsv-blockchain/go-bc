@@ -27,7 +27,7 @@ func (v *verifyOptions) clone() *verifyOptions {
 	}
 }
 
-// VerifyOpt defines a functional option that is used to modify behaviour of
+// VerifyOpt defines a functional option used to modify the behavior of
 // the payment verifier.
 type VerifyOpt func(opts *verifyOptions)
 
@@ -108,8 +108,8 @@ func VerifySPV() VerifyOpt {
 // A PaymentVerifier is an interface used to complete Simple Payment Verification (SPV)
 // in conjunction with a Merkle Proof.
 //
-// The implementation of bc.BlockHeaderChain which is supplied will depend on the client
-// you are using, some may return a HeaderJSON response others may return the blockhash.
+// The implementation of bc.BlockHeaderChain, which is supplied, will depend on the client
+// you are using; some may return a HeaderJSON response, others may return the blockhash.
 type PaymentVerifier interface {
 	VerifyPayment(ctx context.Context, p *Payment, opts ...VerifyOpt) error
 	MerkleProofVerifier
@@ -127,11 +127,11 @@ type verifier struct {
 	opts *verifyOptions
 }
 
-// NewPaymentVerifier creates a new spv.PaymentVerifer with the bc.BlockHeaderChain provided.
+// NewPaymentVerifier creates a new spv.PaymentVerifier with the bc.BlockHeaderChain provided.
 // If no BlockHeaderChain implementation is provided, the setup will return an error.
 //
-// opts control the global behaviour of the verifier and all options are enabled by default, they are:
-// - ancestry verification (proofs checked etc)
+// opts control the global behavior of the verifier, and all options are enabled by default, they are:
+// - ancestry verification (proofs checked etc.)
 // - fees checked, ensuring the root tx covers enough fees
 // - script verification which checks the script is correct (not currently implemented).
 func NewPaymentVerifier(bhc bc.BlockHeaderChain, opts ...VerifyOpt) (PaymentVerifier, error) {
@@ -149,7 +149,7 @@ func NewPaymentVerifier(bhc bc.BlockHeaderChain, opts ...VerifyOpt) (PaymentVeri
 	return &verifier{bhc: bhc, opts: o}, nil
 }
 
-// NewMerkleProofVerifier creates a new spv.MerkleProofVerifer with the bc.BlockHeaderChain provided.
+// NewMerkleProofVerifier creates a new spv.MerkleProofVerifier with the bc.BlockHeaderChain provided.
 // If no BlockHeaderChain implementation is provided, the setup will return an error.
 func NewMerkleProofVerifier(bhc bc.BlockHeaderChain) (MerkleProofVerifier, error) {
 	return NewPaymentVerifier(bhc)

@@ -8,6 +8,7 @@ import (
 var (
 	// ErrHeaderNotFound can be returned if the blockHash isn't found on the network.
 	ErrHeaderNotFound = errors.New("header with not found")
+
 	// ErrNotOnLongestChain indicates the blockhash is present but isn't on the longest current chain.
 	ErrNotOnLongestChain = errors.New("header exists but is not on the longest chain")
 )

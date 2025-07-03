@@ -9,8 +9,8 @@ import (
 	"github.com/bsv-blockchain/go-bc"
 )
 
-// AncestryJSON is a struct which contains all information needed for a transaction to be verified.
-// this contains all ancestors for the transaction allowing proofs etc to be verified.
+// AncestryJSON is a struct that contains all information needed for a transaction to be verified.
+// this contains all ancestors for the transaction allowing proofs, etc. to be verified.
 //
 // NOTE: this is the JSON format of the Ancestry but in a nested format (in comparison) with
 // the flat structure that the TSC uses. This allows verification to become a lot easier and
@@ -30,10 +30,10 @@ func (e *AncestryJSON) IsAnchored() bool {
 
 // HasParents returns true if this ancestry has immediate parents.
 func (e *AncestryJSON) HasParents() bool {
-	return e.Parents != nil && len(e.Parents) > 0
+	return len(e.Parents) > 0
 }
 
-// ParentTx will return a parent if found and convert the rawTx to a bt.TX, otherwise a ErrNotAllInputsSupplied error is returned.
+// ParentTx will return a parent if found and convert the rawTx to a bt.TX, otherwise an ErrNotAllInputsSupplied error is returned.
 func (e *AncestryJSON) ParentTx(txID string) (*bt.Tx, error) {
 	env, ok := e.Parents[txID]
 	if !ok {
@@ -42,7 +42,7 @@ func (e *AncestryJSON) ParentTx(txID string) (*bt.Tx, error) {
 	return bt.NewTxFromString(env.RawTx)
 }
 
-// Bytes takes a TxAncestry struct and returns the serialised binary format.
+// Bytes take a TxAncestry struct and returns the serialized binary format.
 func (e *AncestryJSON) Bytes() ([]byte, error) {
 	ancestryBinary := make([]byte, 0)
 	ancestryBinary = append(ancestryBinary, 1) // Binary format version 1
@@ -62,19 +62,19 @@ func serialiseInputs(parents map[string]*AncestryJSON) ([]byte, error) {
 			return nil, err
 		}
 		dataLength := bt.VarInt(uint64(len(currentTx)))
-		binary = append(binary, flagTx)                // first data will always be a rawTx.
+		binary = append(binary, flagTx)                // the first data will always be a rawTx.
 		binary = append(binary, dataLength.Bytes()...) // of this length.
 		binary = append(binary, currentTx...)          // the data.
-		if input.MapiResponses != nil && len(input.MapiResponses) > 0 {
-			binary = append(binary, flagMapi) // next data will be a mapi response.
+		if len(input.MapiResponses) > 0 {
+			binary = append(binary, flagMapi) // the next data will be a mapi response.
 			numMapis := bt.VarInt(uint64(len(input.MapiResponses)))
-			binary = append(binary, numMapis.Bytes()...) // number of mapi reponses which follow
+			binary = append(binary, numMapis.Bytes()...) // number of mapi responses which follow
 			for _, mapiResponse := range input.MapiResponses {
 				mapiR, err := mapiResponse.Bytes()
 				if err != nil {
 					return nil, err
 				}
-				dataLength := bt.VarInt(uint64(len(mapiR)))
+				dataLength = bt.VarInt(uint64(len(mapiR)))
 				binary = append(binary, dataLength.Bytes()...) // of this length.
 				binary = append(binary, mapiR...)              // the data.
 			}

@@ -209,7 +209,7 @@ func (bump *BUMP) CalculateRootGivenTxid(txid string) (string, error) {
 			}
 		}
 		if !offsetFound {
-			return "", fmt.Errorf("We do not have a hash for this index at height: %v", height)
+			return "", fmt.Errorf("we do not have a hash for this index at height: %v", height)
 		}
 
 		var digest []byte

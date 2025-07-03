@@ -139,7 +139,7 @@ func TestBlockHeader_MarshalJSON(t *testing.T) {
 		bh      *bc.BlockHeader
 		expJSON string
 	}{
-		"can be marshalled": {
+		"can be marshaled": {
 			bh: func() *bc.BlockHeader {
 				bh, _ := bc.NewBlockHeaderFromStr("00000020332bca82fa601bcee3cc00a703988b7126079a75a03ea87654d6b544df73156ae73339a84a36cc3d1c5dc452a6b6bc2ee33c3f583cab9bcf9542b199458fea4844183661ffff7f2000000000")
 				return bh
@@ -153,7 +153,7 @@ func TestBlockHeader_MarshalJSON(t *testing.T) {
 	"bits": "207fffff"
 }`,
 		},
-		"can also be marshalled": {
+		"can also be marshaled": {
 			bh: func() *bc.BlockHeader {
 				bh, _ := bc.NewBlockHeaderFromStr("00000020b21e96654f34d7b10e65d63a29f3978bc9057f1584dae6b80c0292981ece6461fd6af93252fb8b5aec241195eb3e438873969e7ad2b30dbd14149ae3d7b0a4591f183661ffff7f2002000000")
 				return bh

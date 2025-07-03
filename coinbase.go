@@ -74,7 +74,6 @@ func GetCoinbaseParts(height uint32, coinbaseValue uint64, defaultWitnessCommitm
 	return
 }
 
-//nolint:makezero
 func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitment string, wallet string, minerIDBytes []byte) ([]byte, error) {
 	tx := bt.NewTx()
 	err := tx.AddP2PKHOutputFromAddress(wallet, coinbaseValue)
@@ -119,14 +118,13 @@ func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitme
 	return buf, nil
 }
 
-//nolint:makezero
 func makeCoinbase1(height uint32, coinbaseText string) []byte {
 	spaceForExtraNonce := 12
 
 	blockHeightBytes := make([]byte, 4)
 	binary.LittleEndian.PutUint32(blockHeightBytes, height) // Block height
 
-	arbitraryData := []byte{}
+	var arbitraryData []byte
 	arbitraryData = append(arbitraryData, 0x03)
 	arbitraryData = append(arbitraryData, blockHeightBytes[:3]...)
 	arbitraryData = append(arbitraryData, []byte(coinbaseText)...)

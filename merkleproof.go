@@ -74,7 +74,7 @@ func (mp *MerkleProof) Bytes() ([]byte, error) {
 		txLength = bt.VarInt(uint64(len(txOrID))).Bytes()
 	}
 
-	if mp.TargetType == "header" {
+	if mp.TargetType == "header" { //nolint:staticcheck // ignore switch
 		// set bit at index 1
 		flags |= 1 << 1
 	} else if mp.TargetType == "merkleRoot" {

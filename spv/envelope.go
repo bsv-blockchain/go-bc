@@ -2,7 +2,7 @@ package spv
 
 import (
 	"encoding/hex"
-	"fmt"
+	"log"
 	"sync"
 
 	"github.com/bsv-blockchain/go-bt/v2"
@@ -11,7 +11,7 @@ import (
 	"github.com/bsv-blockchain/go-bc"
 )
 
-// Envelope is a struct which contains all information needed for a transaction to be verified.
+// Envelope is a struct that contains all information needed for a transaction to be verified.
 //
 // spec at https://tsc.bitcoinassociation.net/standards/spv-envelope/
 type Envelope struct {
@@ -29,10 +29,10 @@ func (e *Envelope) IsAnchored() bool {
 
 // HasParents returns true if this envelope has immediate parents.
 func (e *Envelope) HasParents() bool {
-	return e.Parents != nil && len(e.Parents) > 0
+	return len(e.Parents) > 0
 }
 
-// ParentTX will return a parent if found and convert the rawTx to a bt.TX, otherwise a ErrNotAllInputsSupplied error is returned.
+// ParentTX will return a parent if found and convert the rawTx to a bt.TX, otherwise an ErrNotAllInputsSupplied error is returned.
 func (e *Envelope) ParentTX(txID string) (*bt.Tx, error) {
 	env, ok := e.Parents[txID]
 	if !ok {
@@ -41,7 +41,7 @@ func (e *Envelope) ParentTX(txID string) (*bt.Tx, error) {
 	return bt.NewTxFromString(env.RawTx)
 }
 
-// CrunchyNutBytes takes an spvEnvelope struct and returns a pointer to the serialised bytes.
+// CrunchyNutBytes takes a spvEnvelope struct and returns a pointer to the serialized bytes.
 func (e *Envelope) CrunchyNutBytes() (*[]byte, error) {
 	flake := make([]byte, 0)
 
@@ -60,30 +60,30 @@ func (e *Envelope) CrunchyNutBytes() (*[]byte, error) {
 
 	err := serialiseCrunchyNutInputs(initialTx, &flake)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return &flake, nil
 }
 
-// serialiseCrunchyNutInputs is a recursive input serialiser for spv Envelopes.
+// serialiseCrunchyNutInputs is a recursive input serializer for spv Envelopes.
 func serialiseCrunchyNutInputs(parents map[string]*Envelope, flake *[]byte) error {
 	for _, input := range parents {
 		currentTx, err := hex.DecodeString(input.RawTx)
 		if err != nil {
-			fmt.Print(err)
+			log.Print(err)
 		}
 		dataLength := bt.VarInt(uint64(len(currentTx)))
-		*flake = append(*flake, flagTx)                // first data will always be a rawTx.
+		*flake = append(*flake, flagTx)                // the first data will always be a rawTx.
 		*flake = append(*flake, dataLength.Bytes()...) // of this length.
 		*flake = append(*flake, currentTx...)          // the data.
-		if input.MapiResponses != nil && len(input.MapiResponses) > 0 {
+		if len(input.MapiResponses) > 0 {
 			for _, mapiResponse := range input.MapiResponses {
 				mapiR, err := mapiResponse.Bytes()
 				if err != nil {
 					return err
 				}
-				dataLength := bt.VarInt(uint64(len(mapiR)))
-				*flake = append(*flake, flagMapi)              // next data will be a mapi response.
+				dataLength = bt.VarInt(uint64(len(mapiR)))
+				*flake = append(*flake, flagMapi)              // the next data will be a mapi response.
 				*flake = append(*flake, dataLength.Bytes()...) // of this length.
 				*flake = append(*flake, mapiR...)              // the data.
 			}
@@ -104,7 +104,7 @@ func serialiseCrunchyNutInputs(parents map[string]*Envelope, flake *[]byte) erro
 	return nil
 }
 
-// NewCrunchyNutEnvelopeFromBytes will encode an spv envelope byte slice into the Envelope structure.
+// NewCrunchyNutEnvelopeFromBytes will encode a spv envelope byte slice into the Envelope structure.
 func NewCrunchyNutEnvelopeFromBytes(b []byte) (*Envelope, error) {
 	var envelope Envelope
 	var offset uint64
@@ -130,7 +130,7 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 	case flagTx:
 		tx, err := bt.NewTxFromBytes(b[*offset : *offset+uint64(l)])
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		txid := tx.TxID()
 		inputs := map[string]*Envelope{}
@@ -153,7 +153,7 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 	case flagProof:
 		binaryProof, err := parseBinaryMerkleProof(b[*offset : *offset+uint64(l)])
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		proof := bc.MerkleProof{
 			Index:      binaryProof.index,
@@ -168,7 +168,7 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 	case flagMapi:
 		mapiResponse, err := bc.NewMapiCallbackFromBytes(b[*offset : *offset+uint64(l)])
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		if eCurrent.MapiResponses != nil {
 			eCurrent.MapiResponses = append(eCurrent.MapiResponses, *mapiResponse)
@@ -177,7 +177,7 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 		}
 		*offset += uint64(l)
 	default:
-		fmt.Printf("Unknown data type: %v, used for: %v", typeOfNextData, b[*offset:*offset+uint64(l)])
+		log.Printf("Unknown data type: %v, used for: %v", typeOfNextData, b[*offset:*offset+uint64(l)])
 		*offset += uint64(l)
 	}
 	if uint64(len(b)) > *offset {
@@ -188,10 +188,10 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 func flagType(flags byte) string {
 	switch flags & targetTypeFlags {
 	// if bits 1 and 2 of flags are NOT set, target should contain a block hash (32 bytes).
-	// if bit 2 of flags is set, target should contain a merkle root (32 bytes).
+	// if bit 2 of flags is set, the target should contain a merkle root (32 bytes).
 	case 0, 4:
 		return "blockhash"
-	// if bit 1 of flags is set, target should contain a block header (80 bytes).
+	// if bit 1 of flags is set, the target should contain a block header (80 bytes).
 	case 2:
 		return h
 	default:
@@ -199,7 +199,7 @@ func flagType(flags byte) string {
 	}
 }
 
-// SpecialKBytes takes an spvEnvelope struct and returns a pointer to the serialised bytes.
+// SpecialKBytes takes a spvEnvelope struct and returns a pointer to the serialized bytes.
 func (e *Envelope) SpecialKBytes() (*[]byte, error) {
 	flake := make([]byte, 0)
 
@@ -218,17 +218,17 @@ func (e *Envelope) SpecialKBytes() (*[]byte, error) {
 
 	err := serialiseSpecialKInputs(initialTx, &flake)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return &flake, nil
 }
 
-// serialiseSpecialKInputs is a recursive input serialiser for spv Envelopes.
+// serialiseSpecialKInputs is a recursive input serializer for spv Envelopes.
 func serialiseSpecialKInputs(parents map[string]*Envelope, flake *[]byte) error {
 	for _, input := range parents {
 		currentTx, err := hex.DecodeString(input.RawTx)
 		if err != nil {
-			fmt.Print(err)
+			log.Print(err)
 		}
 		// the transaction itself
 		dataLength := bt.VarInt(uint64(len(currentTx)))
@@ -248,7 +248,7 @@ func serialiseSpecialKInputs(parents map[string]*Envelope, flake *[]byte) error 
 			*flake = append(*flake, proof...)               // the data.
 		}
 
-		if input.MapiResponses == nil || len(input.MapiResponses) == 0 {
+		if len(input.MapiResponses) == 0 {
 			*flake = append(*flake, 0)
 		} else {
 			numOfMapiResponses := bt.VarInt(uint64(len(input.MapiResponses)))
@@ -275,7 +275,7 @@ func serialiseSpecialKInputs(parents map[string]*Envelope, flake *[]byte) error 
 	return nil
 }
 
-// NewSpecialKEnvelopeFromBytes will encode an spv envelope byte slice into the Envelope structure.
+// NewSpecialKEnvelopeFromBytes will encode a spv envelope byte slice into the Envelope structure.
 func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 	allBinary := uint64(len(b))
 	var envelope Envelope
@@ -289,7 +289,7 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 	offset++
 
 	// split up the binary into flakes where each one is to be processed concurrently.
-	var flakes = [][]byte{}
+	var flakes [][]byte
 	for ok := true; ok; ok = allBinary > offset {
 		l, size := bt.NewVarIntFromBytes(b[offset:])
 		offset += uint64(size)
@@ -322,7 +322,7 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 					if len(txid) > 64 {
 						tr, err := bt.NewTxFromString(txid)
 						if err != nil {
-							fmt.Println(err)
+							log.Println(err)
 						}
 						txid = tr.TxID()
 					}
@@ -351,19 +351,19 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 			case 2:
 				mcb, err := parseSpecialKMapi(flake)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
 				mapiCallbackChan <- mcb
 			case 1:
 				proof, err := parseSpecialKProof(flake)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
 				proofChan <- proof
 			case 0:
 				tx, err := parseSpecialKFlakeTx(flake)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
 				txid := tx.TxID()
 				if idx == 0 {
@@ -384,8 +384,8 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 	done <- true
 
 	// construct something useful
-	// iterate through all the transactions, addiong them to the struct's Parents
-	// if they're in the struct delete them, if they're not then leave them, and go one input deep.
+	// iterate through all the transactions, adding them to the struct's Parents
+	// if they're in the struct deleting them, if they're not then leave them, and go one input deep.
 	// then run through again until they're all done.
 	// // keep building struct unless all txs are in the struct.
 	for ok := true; ok; ok = len(txs) > 0 {
@@ -404,10 +404,10 @@ func searchParents(txs *map[string]*bt.Tx, currentEnvelope *Envelope, txid strin
 	// is this the route transaction, and do we know it?
 	if txid == currentEnvelope.TxID {
 		currentEnvelope.RawTx = tx.String()
-		if m != nil { // don't add proof unless it's a non empty struct.
+		if m != nil { // don't add proof unless it's a non-empty struct.
 			currentEnvelope.MapiResponses = m
 		}
-		if p != nil { // don't add proof unless it's a non empty struct.
+		if p != nil { // don't add proof unless it's a non-empty struct.
 			currentEnvelope.Proof = p
 		}
 		delete(*txs, txid)
@@ -420,10 +420,10 @@ func searchParents(txs *map[string]*bt.Tx, currentEnvelope *Envelope, txid strin
 			var nextEnvelope Envelope
 			nextEnvelope.TxID = txid
 			nextEnvelope.RawTx = tx.String()
-			if m != nil { // don't add proof unless it's a non empty struct.
+			if m != nil { // don't add proof unless it's a non-empty struct.
 				nextEnvelope.MapiResponses = m
 			}
-			if p != nil { // don't add proof unless it's a non empty struct.
+			if p != nil { // don't add proof unless it's a non-empty struct.
 				nextEnvelope.Proof = p
 			} else {
 				inputs := map[string]*Envelope{}
@@ -438,7 +438,7 @@ func searchParents(txs *map[string]*bt.Tx, currentEnvelope *Envelope, txid strin
 		}
 	}
 	// if we didn't find it at this level, go one deeper into the struct to find a parent of a parent... etc.
-	if currentEnvelope.Parents != nil && len(currentEnvelope.Parents) > 0 {
+	if len(currentEnvelope.Parents) > 0 {
 		for _, parent := range currentEnvelope.Parents {
 			// this means the context of the next iteration through will be from the parent here, which is one step deeper.
 			return searchParents(txs, parent, txid, tx, p, m)
@@ -455,7 +455,7 @@ func parseSpecialKFlakeTx(b []byte) (*bt.Tx, error) {
 	}
 	tx, err := bt.NewTxFromBytes(b)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return nil, err
 	}
 	return tx, nil
@@ -470,7 +470,7 @@ func parseSpecialKProof(b []byte) (*bc.MerkleProof, error) {
 	}
 	binaryProof, err := parseBinaryMerkleProof(b)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return nil, errors.New("couldn't parse the proof bytes")
 	}
 	proof := bc.MerkleProof{
@@ -497,7 +497,7 @@ func parseSpecialKMapi(b []byte) ([]bc.MapiCallback, error) {
 	internalOffset++
 
 	// split up the binary into flakes where each one is to be processed concurrently.
-	var responses = [][]byte{}
+	var responses [][]byte
 	for ok := true; ok; ok = allBinary > internalOffset {
 		l, size := bt.NewVarIntFromBytes(b[internalOffset:])
 		internalOffset += uint64(size)
@@ -510,7 +510,7 @@ func parseSpecialKMapi(b []byte) ([]bc.MapiCallback, error) {
 	for _, response := range responses {
 		mapiResponse, err := bc.NewMapiCallbackFromBytes(response)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return nil, errors.New("couldn't parse the callback bytes")
 		}
 		mapiResponses = append(mapiResponses, *mapiResponse)

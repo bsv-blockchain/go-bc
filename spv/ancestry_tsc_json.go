@@ -55,7 +55,7 @@ func NewAncestryJSONFromBytes(b []byte) (TSCAncestriesJSON, error) {
 	return ancestors, nil
 }
 
-// Bytes takes an AncestryJSON and returns the serialised bytes.
+// Bytes take an AncestryJSON and return the serialized bytes.
 func (j TSCAncestriesJSON) Bytes() ([]byte, error) {
 	binaryTxContext := make([]byte, 0)
 
@@ -77,12 +77,12 @@ func (j TSCAncestriesJSON) Bytes() ([]byte, error) {
 			if err != nil {
 				return nil, err
 			}
-			length := bt.VarInt(uint64(len(rawProof)))
+			length = bt.VarInt(uint64(len(rawProof)))
 			binaryTxContext = append(binaryTxContext, flagProof)
 			binaryTxContext = append(binaryTxContext, length.Bytes()...)
 			binaryTxContext = append(binaryTxContext, rawProof...)
 		}
-		if ancestor.MapiResponses != nil && len(ancestor.MapiResponses) > 0 {
+		if len(ancestor.MapiResponses) > 0 {
 			binaryTxContext = append(binaryTxContext, flagMapi)
 			numOfMapiResponses := bt.VarInt(uint64(len(ancestor.MapiResponses)))
 			binaryTxContext = append(binaryTxContext, numOfMapiResponses.Bytes()...)
@@ -104,10 +104,10 @@ func (j TSCAncestriesJSON) Bytes() ([]byte, error) {
 func flagProofType(flags byte) string {
 	switch flags & targetTypeFlags {
 	// if bits 1 and 2 of flags are NOT set, target should contain a block hash (32 bytes).
-	// if bit 2 of flags is set, target should contain a merkle root (32 bytes).
+	// if bit 2 of flags is set, the target should contain a merkle root (32 bytes).
 	case 0, 4:
 		return "blockhash"
-	// if bit 1 of flags is set, target should contain a block header (80 bytes).
+	// if bit 1 of flags is set, the target should contain a block header (80 bytes).
 	case 2:
 		return h
 	default:
