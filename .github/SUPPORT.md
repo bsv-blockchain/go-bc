@@ -8,7 +8,7 @@ Need help with **go-bc**? You're in the right place. Here’s how to get support
 
 Before asking, check the existing threads:
 
-* 🔍 Search [Discussions](https://github.com/bsv-blockchain/go-bt/discussions)
+* 🔍 Search [Discussions](https://github.com/bsv-blockchain/go-bc/discussions)
 * 🆕 Can’t find what you need? Start a new topic and ask away!
 
 <br/>
@@ -17,7 +17,7 @@ Before asking, check the existing threads:
 
 Found a bug?
 
-1. Check the [issue tracker](https://github.com/bsv-blockchain/go-bt/issues) to avoid duplicates.
+1. Check the [issue tracker](https://github.com/bsv-blockchain/go-bc/issues) to avoid duplicates.
 2. If it’s new, open an issue with:
 
 	* Clear steps to reproduce

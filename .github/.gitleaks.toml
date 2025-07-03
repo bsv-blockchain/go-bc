@@ -1,4 +1,4 @@
-title = "go-bt gitleaks config"
+title = "go-bc gitleaks config"
 
 [allowlist]
 description = "global allow list"

@@ -738,5 +738,5 @@ All contributors are expected to append entries here when making meaningful chan
 
 | Date       | Author   | Summary of Changes                |
 |------------|----------|-----------------------------------|
-| 2025-07-02 | @mrz1836 | Adapted to fix this project go-bt |
+| 2025-07-02 | @mrz1836 | Adapted to fix this project go-bc |
 > For minor edits (typos, formatting), this log update is optional. For all behavioral or structural changes, log entries are **required**.
