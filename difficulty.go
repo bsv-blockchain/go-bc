@@ -14,6 +14,7 @@ var (
 	regDiff     float64
 )
 
+//nolint:gochecknoinits // this needs to be refactored to avoid using init
 func init() {
 	bn, err := ExpandTargetFromAsInt("1d00ffff")
 	if err != nil {

@@ -46,7 +46,6 @@
 		"disable": [
 			"err113",
 			"gochecknoglobals",
-			"gochecknoinits",
 			"gocritic",
 			"godot",
 			"godox",
@@ -70,6 +69,7 @@
 			"exhaustive",
 			"forbidigo",
 			"gocheckcompilerdirectives",
+			"gochecknoinits",
 			"gochecksumtype",
 			"goheader",
 			"gomoddirectives",
