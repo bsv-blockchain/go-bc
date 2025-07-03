@@ -7,8 +7,8 @@ import (
 	"errors"
 	"math/big"
 
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/libsv/go-bk/crypto"
-	"github.com/libsv/go-bt/v2"
 )
 
 /*

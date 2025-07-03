@@ -5,11 +5,11 @@
 package spv
 
 import (
+	"github.com/bsv-blockchain/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2/bscript"
 	"github.com/libsv/go-bk/crypto"
-	"github.com/libsv/go-bt/v2"
-	"github.com/libsv/go-bt/v2/bscript"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 )
 
 const (

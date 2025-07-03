@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc/spv"
+	"github.com/bsv-blockchain/go-bc/spv"
 )
 
 func TestEnvelopeCreator_NewEnvelopeCreator(t *testing.T) {

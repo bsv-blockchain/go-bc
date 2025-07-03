@@ -5,10 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bc"
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/stretchr/testify/require"
-
-	"github.com/libsv/go-bc"
 )
 
 func TestNewBlock(t *testing.T) {

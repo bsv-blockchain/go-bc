@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc/spv"
-	"github.com/libsv/go-bc/testing/data"
+	"github.com/bsv-blockchain/go-bc/spv"
+	"github.com/bsv-blockchain/go-bc/testing/data"
 )
 
 type TestData struct {

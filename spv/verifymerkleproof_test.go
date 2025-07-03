@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc"
-	"github.com/libsv/go-bc/spv"
+	"github.com/bsv-blockchain/go-bc"
+	"github.com/bsv-blockchain/go-bc/spv"
 )
 
 type mockBlockHeaderChain struct{}

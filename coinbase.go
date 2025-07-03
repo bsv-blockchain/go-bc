@@ -41,7 +41,7 @@ import (
 	"encoding/hex"
 	"log"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 )
 
 // BuildCoinbase recombines the different parts of the coinbase transaction.

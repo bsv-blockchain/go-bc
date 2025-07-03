@@ -6,8 +6,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc"
-	"github.com/libsv/go-bc/spv"
+	"github.com/bsv-blockchain/go-bc"
+	"github.com/bsv-blockchain/go-bc/spv"
 )
 
 func TestPaymentVerifier_NewPaymentVerifier(t *testing.T) {

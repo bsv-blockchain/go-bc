@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 	"github.com/libsv/go-p2p/chaincfg/chainhash"
 )
 

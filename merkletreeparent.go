@@ -3,8 +3,8 @@ package bc
 import (
 	"encoding/hex"
 
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/libsv/go-bk/crypto"
-	"github.com/libsv/go-bt/v2"
 	"github.com/libsv/go-p2p/chaincfg/chainhash"
 )
 

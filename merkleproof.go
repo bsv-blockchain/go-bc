@@ -3,7 +3,7 @@ package bc
 import (
 	"encoding/hex"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 )
 
 // A MerkleProof is a structure that proves inclusion of a

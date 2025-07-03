@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/pkg/errors"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 )
 
 // Envelope is a struct which contains all information needed for a transaction to be verified.

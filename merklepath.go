@@ -3,7 +3,7 @@ package bc
 import (
 	"encoding/hex"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 )
 
 // MerklePath data model json format according to BRC-58.

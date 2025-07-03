@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 )
 
 var tests = map[string]struct {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 )
 
 func TestGetMerkleTreeParentStr(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 
 	"github.com/stretchr/testify/require"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/pkg/errors"
 )
 

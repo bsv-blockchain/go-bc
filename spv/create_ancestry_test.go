@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/libsv/go-bc"
-	"github.com/libsv/go-bc/spv"
-	"github.com/libsv/go-bc/testing/data"
+	"github.com/bsv-blockchain/go-bc"
+	"github.com/bsv-blockchain/go-bc/spv"
+	"github.com/bsv-blockchain/go-bc/testing/data"
 )
 
 type mockTxMerkleGetter struct {

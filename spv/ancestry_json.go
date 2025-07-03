@@ -3,10 +3,10 @@ package spv
 import (
 	"encoding/hex"
 
-	"github.com/libsv/go-bt/v2"
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/pkg/errors"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 )
 
 // AncestryJSON is a struct which contains all information needed for a transaction to be verified.

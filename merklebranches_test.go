@@ -3,7 +3,7 @@ package bc_test
 import (
 	"testing"
 
-	"github.com/libsv/go-bc"
+	"github.com/bsv-blockchain/go-bc"
 )
 
 func TestMerkleRootFromBranches(t *testing.T) {
