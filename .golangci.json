@@ -105,9 +105,9 @@
 			"gocritic",
 			"gocyclo",
 			"godot",
-			"makezero"
+			"makezero",
 			"nestif",
-			"wsl_v5",
+			"wsl_v5"
 		],
 		"settings": {
 			"gosec": {
