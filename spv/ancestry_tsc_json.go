@@ -16,7 +16,7 @@ type TSCAncestriesJSON []TSCAncestryJSON
 
 // TSCAncestryJSON is one of the serial objects within the overall list of ancestors.
 //
-// NOTE: This JSON structure follows the TSC definition even though the other JSON
+// This JSON structure follows the TSC definition even though the other JSON
 // structure used in ancestry_json.go is more useful for verification.
 type TSCAncestryJSON struct {
 	RawTx         string             `json:"rawtx,omitempty"`

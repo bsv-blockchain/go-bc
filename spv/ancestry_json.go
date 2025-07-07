@@ -12,7 +12,7 @@ import (
 // AncestryJSON is a struct that contains all information needed for a transaction to be verified.
 // this contains all ancestors for the transaction allowing proofs, etc. to be verified.
 //
-// NOTE: this is the JSON format of the Ancestry but in a nested format (in comparison) with
+// This is the JSON format of the Ancestry but in a nested format (in comparison) with
 // the flat structure that the TSC uses. This allows verification to become a lot easier and
 // use a recursive function.
 type AncestryJSON struct {
