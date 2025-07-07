@@ -16,10 +16,12 @@ func TestBuildingMerklePathBinary(t *testing.T) {
 	// build example merkle path data.
 	merklePath := bc.MerklePath{
 		Index: 136,
-		Path: []string{"6cf512411d03ab9b61643515e7aa9afd005bf29e1052ade95410b3475f02820c",
+		Path: []string{
+			"6cf512411d03ab9b61643515e7aa9afd005bf29e1052ade95410b3475f02820c",
 			"cd73c0c6bb645581816fa960fd2f1636062fcbf23cb57981074ab8d708a76e3b",
 			"b4c8d919190a090e77b73ffcd52b85babaaeeb62da000473102aca7f070facef",
-			"3470d882cf556a4b943639eba15dc795dffdbebdc98b9a98e3637fda96e3811e"},
+			"3470d882cf556a4b943639eba15dc795dffdbebdc98b9a98e3637fda96e3811e",
+		},
 	}
 
 	// build binary path from it.

@@ -51,7 +51,6 @@ func ReverseHexString(hex string) string {
 	}
 
 	for i := len(hex); i >= 2; i -= 2 {
-
 		res += hex[i-2 : i]
 	}
 	return res

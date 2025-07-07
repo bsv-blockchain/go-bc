@@ -106,7 +106,6 @@ func (v *verifier) VerifyMerkleProof(ctx context.Context, proof []byte) (*Merkle
 
 // VerifyMerkleProofJSON verifies a Merkle Proof in standard JSON format.
 func (v *verifier) VerifyMerkleProofJSON(ctx context.Context, proof *bc.MerkleProof) (bool, bool, error) {
-
 	txid, err := txidFromTxOrID(proof.TxOrID)
 	if err != nil {
 		return false, false, err
@@ -137,7 +136,6 @@ func (v *verifier) VerifyMerkleProofJSON(ctx context.Context, proof *bc.MerklePr
 	} else if proof.TargetType == "merkleRoot" && len(proof.Target) == 64 {
 		// the `target` field contains a merkle root
 		merkleRoot = proof.Target
-
 	} else {
 		return false, false, errors.New("invalid TargetType or target field")
 	}
@@ -221,7 +219,6 @@ func validateTxOrID(flags byte, txOrID string) error {
 }
 
 func txidFromTxOrID(txOrID string) (string, error) {
-
 	// The `txOrId` field contains a transaction ID
 	if len(txOrID) == 64 {
 		return txOrID, nil

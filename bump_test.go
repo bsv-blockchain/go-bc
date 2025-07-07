@@ -186,5 +186,4 @@ func TestOnlySpecifiedPathsStored(t *testing.T) {
 		l := int(math.Ceil(math.Log2(float64(len(blockTxExample))))) + 1
 		require.Equal(t, l, totalHashes)
 	}
-
 }

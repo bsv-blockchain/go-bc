@@ -40,7 +40,6 @@ func TestGenesisBlockHash(t *testing.T) {
 }
 
 func TestReverseHexString(t *testing.T) {
-
 	expectedEven := "3910"
 	expectedOdd := "391004"
 	expectedLong := "4512710951122431"

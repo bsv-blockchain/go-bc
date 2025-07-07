@@ -61,7 +61,8 @@ func BuildCoinbase(c1 []byte, c2 []byte, extraNonce1 string, extraNonce2 string)
 // GetCoinbaseParts returns the two split coinbase parts from coinbase metadata.
 // See https://arxiv.org/pdf/1703.06545.pdf section 2.2 for more info.
 func GetCoinbaseParts(height uint32, coinbaseValue uint64, defaultWitnessCommitment string, coinbaseText string,
-	walletAddress string, minerIDBytes []byte) (coinbase1 []byte, coinbase2 []byte, err error) {
+	walletAddress string, minerIDBytes []byte,
+) (coinbase1 []byte, coinbase2 []byte, err error) {
 	coinbase1 = makeCoinbase1(height, coinbaseText)
 
 	ot, err := makeCoinbaseOutputTransactions(coinbaseValue, defaultWitnessCommitment, walletAddress, minerIDBytes)

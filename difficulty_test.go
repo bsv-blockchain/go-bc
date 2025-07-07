@@ -33,6 +33,7 @@ func TestExpandTargetFrom_GenesisBlock(t *testing.T) {
 		t.Errorf("Expected result to be %s, got '%s", expected, got)
 	}
 }
+
 func TestExpandTargetFrom(t *testing.T) {
 	expected := "00000000000000002815ee000000000000000000000000000000000000000000"
 	got, _ := bc.ExpandTargetFrom("182815ee")
@@ -41,6 +42,7 @@ func TestExpandTargetFrom(t *testing.T) {
 		t.Errorf("Expected result to be %s, got '%s", expected, got)
 	}
 }
+
 func TestExpandTargetFrom_InvalidBits(t *testing.T) {
 	_, err := bc.ExpandTargetFrom("invalidBgolaits")
 	if err == nil {

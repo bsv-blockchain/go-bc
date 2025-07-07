@@ -31,7 +31,6 @@ func (m *mockBlockHeaderClient) BlockHeader(ctx context.Context, blockHash strin
 
 // TestSPVEnvelope_VerifyPayment tests the VerifyPayment method of the SPV envelope.
 func TestSPVEnvelope_VerifyPayment(t *testing.T) {
-
 	t.Skip("this is failing due to bsv-blockchain/go-bt vs libsv/go-bt incompatibility")
 
 	tests := map[string]struct {
@@ -254,7 +253,6 @@ func TestSPVEnvelope_VerifyPayment(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 // TestVerifyAncestryBinary tests the VerifyPayment method of the SPV envelope with binary data.

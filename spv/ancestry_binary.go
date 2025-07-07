@@ -43,7 +43,6 @@ type ancestry struct {
 
 // parseAncestry creates a new struct from the bytes of a txContext.
 func parseAncestry(b []byte) (map[[32]byte]*ancestry, error) {
-
 	if b[0] != 1 { // the first byte is the version number.
 		return nil, ErrUnsupporredVersion
 	}
@@ -120,7 +119,7 @@ func parseMapiCallbacks(b []byte) ([]*bc.MapiCallback, error) {
 	}
 	internalOffset++
 
-	var responses = [][]byte{}
+	responses := [][]byte{}
 	for allBinary > internalOffset {
 		l, size := bt.NewVarIntFromBytes(b[internalOffset:])
 		internalOffset += uint64(size)

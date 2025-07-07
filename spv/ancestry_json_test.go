@@ -367,6 +367,7 @@ func BenchmarkSerializeSpecialK(b *testing.B) {
 		benchmarkSpecialKEnvelopeSerialize(b, &e)
 	}
 }
+
 func BenchmarkDeserializeSpecialK(b *testing.B) {
 	for _, test := range tests {
 		binary, err := hex.DecodeString(test.specialKHexString)

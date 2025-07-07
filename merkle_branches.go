@@ -37,7 +37,7 @@ func GetMerkleBranches(template []string) []string {
 		branches = append(branches, hashes[1])
 
 		for i := 0; i < tot; i += 2 {
-			var a, _ = hex.DecodeString(hashes[i])
+			a, _ := hex.DecodeString(hashes[i])
 			var b []byte
 			if (i + 1) < tot {
 				b, _ = hex.DecodeString(hashes[i+1])
@@ -90,5 +90,4 @@ func MerkleRootFromBranches(txHash string, txIndex int, branches []string) (stri
 	}
 
 	return hex.EncodeToString(bt.ReverseBytes(hash)), nil
-
 }

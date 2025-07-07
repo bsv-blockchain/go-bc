@@ -48,7 +48,6 @@ func TestMerkleProofBytes(t *testing.T) {
 
 	for name, test := range proofTests {
 		t.Run(name, func(t *testing.T) {
-
 			expected, _ := hex.DecodeString(test.expected)
 
 			proof, err := test.merkleProofJSON.Bytes()
