@@ -15,7 +15,7 @@ import (
 // The implementation of an spv.TxStore and spv.MerkleProofStore which is supplied will depend
 // on the client you are using.
 type TxAncestryCreator interface {
-	CreateTxAncestry(context.Context, *bt.Tx) (*AncestryJSON, error)
+	CreateTxAncestry(ctx context.Context, tx *bt.Tx) (*AncestryJSON, error)
 }
 
 // TxStore interfaces the a tx store.
