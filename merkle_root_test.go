@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/bsv-blockchain/go-bc"
-	"github.com/libsv/go-p2p/chaincfg/chainhash"
+	"github.com/bsv-blockchain/go-sdk/chainhash"
 )
 
 func TestBuildMerkleRoot(t *testing.T) {
@@ -72,7 +72,7 @@ func TestBuildMerkleTreeStoreChainHash(t *testing.T) {
 
 	transactionHashes := make([]*chainhash.Hash, len(txids))
 	for i, txid := range txids {
-		transactionHashes[i], _ = chainhash.NewHashFromStr(txid)
+		transactionHashes[i], _ = chainhash.NewHashFromHex(txid)
 	}
 
 	merkleTreeChainStore := bc.BuildMerkleTreeStoreChainHash(transactionHashes)
@@ -109,7 +109,7 @@ func TestBuildMerkleTreeStoreChainHashDifferentSizes(t *testing.T) {
 	for i := 1; i <= 8; i++ {
 		transactionHashes := make([]*chainhash.Hash, i)
 		for idx := range transactionHashes {
-			h, _ := chainhash.NewHashFromStr(txids[idx])
+			h, _ := chainhash.NewHashFromHex(txids[idx])
 			transactionHashes[idx] = h
 		}
 

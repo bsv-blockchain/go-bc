@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/libsv/go-p2p/chaincfg/chainhash"
+	"github.com/bsv-blockchain/go-sdk/chainhash"
 	"github.com/stretchr/testify/require"
 )
 
