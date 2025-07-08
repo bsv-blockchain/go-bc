@@ -6,8 +6,8 @@ import (
 	"math"
 
 	"github.com/bsv-blockchain/go-bt/v2"
-	"github.com/libsv/go-bk/crypto"
-	"github.com/libsv/go-p2p/chaincfg/chainhash"
+	"github.com/bsv-blockchain/go-sdk/chainhash"
+	crypto "github.com/bsv-blockchain/go-sdk/primitives/hash"
 )
 
 // TxsToTxIDs takes an array of transactions

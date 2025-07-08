@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/bsv-blockchain/go-bt/v2"
-	"github.com/libsv/go-bk/crypto"
+	crypto "github.com/bsv-blockchain/go-sdk/primitives/hash"
 )
 
 func getHashes(txHashes []string) []string {

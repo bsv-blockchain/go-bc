@@ -4,7 +4,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/libsv/go-p2p/chaincfg/chainhash"
+	"github.com/bsv-blockchain/go-sdk/chainhash"
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,7 +47,7 @@ var blockTxExample = []string{
 
 func TestNewBUMPFromMerkleTreeWithOnlyOneTxid(t *testing.T) {
 	chainHashBlock := make([]*chainhash.Hash, 0)
-	hash, err := chainhash.NewHashFromStr(txidSmallBlock)
+	hash, err := chainhash.NewHashFromHex(txidSmallBlock)
 	require.NoError(t, err)
 	chainHashBlock = append(chainHashBlock, hash)
 	merkles := BuildMerkleTreeStoreChainHash(chainHashBlock)
@@ -61,7 +61,7 @@ func TestNewBUMPFromMerkleTreeWithOnlyOneTxid(t *testing.T) {
 func TestNewBUMPFromMerkleTree(t *testing.T) {
 	chainHashBlock := make([]*chainhash.Hash, 0)
 	for _, txid := range blockTxExample {
-		hash, err := chainhash.NewHashFromStr(txid)
+		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
 		chainHashBlock = append(chainHashBlock, hash)
 	}
@@ -102,7 +102,7 @@ func TestCalculateRootGivenTxid(t *testing.T) {
 func TestTestnetCalculateRootGivenTxid(t *testing.T) {
 	chainHashBlock := make([]*chainhash.Hash, 0)
 	for _, txid := range testnetBlockExample {
-		hash, err := chainhash.NewHashFromStr(txid)
+		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
 		chainHashBlock = append(chainHashBlock, hash)
 	}
@@ -154,7 +154,7 @@ func TestNotEnoughLeavesInHeight(t *testing.T) {
 func TestTxIDs(t *testing.T) {
 	chainHashBlock := make([]*chainhash.Hash, 0)
 	for _, txid := range testnetBlockExample {
-		hash, err := chainhash.NewHashFromStr(txid)
+		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
 		chainHashBlock = append(chainHashBlock, hash)
 	}
@@ -169,7 +169,7 @@ func TestTxIDs(t *testing.T) {
 func TestOnlySpecifiedPathsStored(t *testing.T) {
 	chainHashBlock := make([]*chainhash.Hash, 0)
 	for _, txid := range blockTxExample {
-		hash, err := chainhash.NewHashFromStr(txid)
+		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
 		chainHashBlock = append(chainHashBlock, hash)
 	}
