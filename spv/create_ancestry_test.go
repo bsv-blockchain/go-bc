@@ -70,7 +70,7 @@ type proofOverride struct {
 
 var (
 	fixturesOnce  sync.Once
-	fixturesErr   error
+	errFixtures   error
 	fixtureTxs    map[string]string
 	fixtureProofs map[string]*bc.MerkleProof
 )
@@ -126,10 +126,10 @@ func ensureFixtureData(t *testing.T) {
 	t.Helper()
 
 	fixturesOnce.Do(func() {
-		fixtureTxs, fixtureProofs, fixturesErr = loadFixtureData()
+		fixtureTxs, fixtureProofs, errFixtures = loadFixtureData()
 	})
 
-	require.NoError(t, fixturesErr)
+	require.NoError(t, errFixtures)
 }
 
 func loadFixtureData() (map[string]string, map[string]*bc.MerkleProof, error) {
@@ -267,7 +267,6 @@ func TestSPVEnvelopeCreateEnvelope(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			testTx, err := bt.NewTxFromString(test.tx)
 			require.NoError(t, err)
