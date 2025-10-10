@@ -82,7 +82,7 @@ func serialiseInputs(parents map[string]*AncestryJSON) ([]byte, error) {
 		if input.Proof != nil {
 			proof, err := input.Proof.Bytes()
 			if err != nil {
-				return nil, errors.Wrap(err, "Failed to serialise this input's proof struct")
+				return nil, errors.Wrap(err, "Failed to serialize this input's proof struct")
 			}
 			proofLength := bt.VarInt(uint64(len(proof)))
 			binary = append(binary, flagProof)              // it's going to be a proof.

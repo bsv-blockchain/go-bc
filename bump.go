@@ -3,7 +3,6 @@ package bc
 import (
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math"
 	"sort"
@@ -33,7 +32,7 @@ type leaf struct {
 // it is a byte slice that contains many BUMPs one after another.
 func NewBUMPFromStream(bytes []byte) (*BUMP, int, error) {
 	if len(bytes) < 37 {
-		return nil, 0, errors.New("BUMP bytes do not contain enough data to be valid")
+		return nil, 0, ErrInsufficientBUMPData
 	}
 	bump := &BUMP{}
 
@@ -56,7 +55,7 @@ func NewBUMPFromStream(bytes []byte) (*BUMP, int, error) {
 		skip += size
 		nLeavesAtThisHeight := uint64(n)
 		if nLeavesAtThisHeight == 0 {
-			return nil, 0, errors.New("There are no leaves at height: " + fmt.Sprint(lv) + " which makes this invalid")
+			return nil, 0, fmt.Errorf("%w: %d", ErrInvalidLeafHeight, lv)
 		}
 		bump.Path[lv] = make([]leaf, nLeavesAtThisHeight)
 		for lf := uint64(0); lf < nLeavesAtThisHeight; lf++ {
@@ -74,7 +73,7 @@ func NewBUMPFromStream(bytes []byte) (*BUMP, int, error) {
 				l.Duplicate = &dup
 			} else {
 				if len(bytes) < skip+32 {
-					return nil, 0, errors.New("BUMP bytes do not contain enough data to be valid")
+					return nil, 0, ErrInsufficientBUMPData
 				}
 				h := StringFromBytesReverse(bytes[skip : skip+32])
 				l.Hash = &h
@@ -192,7 +191,7 @@ func (bump *BUMP) CalculateRootGivenTxid(txid string) (string, error) {
 		}
 	}
 	if !txidFound {
-		return "", errors.New("The BUMP does not contain the txid: " + txid)
+		return "", fmt.Errorf("%w: %s", ErrTxidNotInBUMP, txid)
 	}
 
 	// Calculate the root using the index as a way to determine which direction to concatenate.
@@ -209,7 +208,7 @@ func (bump *BUMP) CalculateRootGivenTxid(txid string) (string, error) {
 			}
 		}
 		if !offsetFound {
-			return "", fmt.Errorf("we do not have a hash for this index at height: %v", height)
+			return "", fmt.Errorf("%w: %d", ErrNoHashAtIndex, height)
 		}
 
 		var digest []byte
@@ -231,7 +230,7 @@ func (bump *BUMP) CalculateRootGivenTxid(txid string) (string, error) {
 // NewBUMPFromMerkleTreeAndIndex with a merkle tree we calculate the merkle path for a given transaction.
 func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.Hash, txIndex uint64) (*BUMP, error) {
 	if len(merkleTree) == 0 {
-		return nil, errors.New("merkle tree is empty")
+		return nil, ErrEmptyMerkleTree
 	}
 
 	bump := &BUMP{
@@ -257,7 +256,9 @@ func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.H
 
 	levelOffset := 0
 	for height := 0; height < treeHeight; height++ {
-		offset := txIndex >> uint64(height)
+		// Safe conversion: height is bounded by treeHeight (max ~32 for Bitcoin blocks)
+		heightUint := uint(height) //nolint:gosec // height is bounded by tree height
+		offset := txIndex >> heightUint
 		if offset&1 == 0 {
 			// offset is even we need to use the hash to the right.
 			offset++
@@ -267,7 +268,9 @@ func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.H
 			offset--
 		}
 		thisLeaf := leaf{Offset: &offset}
-		hash := merkleTree[levelOffset+int(offset)]
+		// Safe conversion: offset is bounded by merkle tree size
+		offsetInt := int(offset) //nolint:gosec // bounded by merkle tree size
+		hash := merkleTree[levelOffset+offsetInt]
 		if hash.IsEqual(nil) {
 			thisLeaf.Duplicate = &truePointer
 		} else {

@@ -91,7 +91,7 @@ func serialiseCrunchyNutInputs(parents map[string]*Envelope, flake *[]byte) erro
 		if input.Proof != nil {
 			proof, err := input.Proof.Bytes()
 			if err != nil {
-				return errors.Wrap(err, "Failed to serialise this input's proof struct")
+				return errors.Wrap(err, "Failed to serialize this input's proof struct")
 			}
 			proofLength := bt.VarInt(uint64(len(proof)))
 			*flake = append(*flake, flagProof)              // it's going to be a proof.
@@ -125,7 +125,8 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 	typeOfNextData := b[*offset]
 	*offset++
 	l, size := bt.NewVarIntFromBytes(b[*offset:])
-	*offset += uint64(size)
+	// Safe conversion: size from VarInt is bounded by max varint size (9 bytes)
+	*offset += uint64(size) //nolint:gosec // size bounded by max varint size
 	switch typeOfNextData {
 	case flagTx:
 		tx, err := bt.NewTxFromBytes(b[*offset : *offset+uint64(l)])
@@ -241,7 +242,7 @@ func serialiseSpecialKInputs(parents map[string]*Envelope, flake *[]byte) error 
 		} else {
 			proof, err := input.Proof.Bytes()
 			if err != nil {
-				return errors.Wrap(err, "Failed to serialise this input's proof struct")
+				return errors.Wrap(err, "Failed to serialize this input's proof struct")
 			}
 			proofLength := bt.VarInt(uint64(len(proof)))
 			*flake = append(*flake, proofLength.Bytes()...) // of this length.
@@ -292,7 +293,7 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 	var flakes [][]byte
 	for ok := true; ok; ok = allBinary > offset {
 		l, size := bt.NewVarIntFromBytes(b[offset:])
-		offset += uint64(size)
+		offset += uint64(size) //nolint:gosec // size bounded by max varint size
 		flake := b[offset : offset+uint64(l)]
 		offset += uint64(l)
 		flakes = append(flakes, flake)
@@ -500,7 +501,7 @@ func parseSpecialKMapi(b []byte) ([]bc.MapiCallback, error) {
 	var responses [][]byte
 	for ok := true; ok; ok = allBinary > internalOffset {
 		l, size := bt.NewVarIntFromBytes(b[internalOffset:])
-		internalOffset += uint64(size)
+		internalOffset += uint64(size) //nolint:gosec // size bounded by max varint size
 		response := b[internalOffset : internalOffset+uint64(l)]
 		internalOffset += uint64(l)
 		responses = append(responses, response)

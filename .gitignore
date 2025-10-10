@@ -40,8 +40,5 @@ testdata
 # vim
 *.swp
 
-# AI Models
-.claude
-
 # Node modules
 node_modules/

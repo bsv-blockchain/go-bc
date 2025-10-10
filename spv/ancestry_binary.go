@@ -98,7 +98,8 @@ func parseChunk(b []byte, start uint64) (binaryChunk, uint64) {
 	typeOfNextData := b[offset]
 	offset++
 	l, size := bt.NewVarIntFromBytes(b[offset:])
-	offset += uint64(size)
+	// Safe conversion: size from VarInt is bounded by max varint size (9 bytes)
+	offset += uint64(size) //nolint:gosec // size bounded by max varint size
 	chunk := binaryChunk{
 		ContentType: typeOfNextData,
 		Data:        b[offset : offset+uint64(l)],
@@ -122,7 +123,8 @@ func parseMapiCallbacks(b []byte) ([]*bc.MapiCallback, error) {
 	responses := [][]byte{}
 	for allBinary > internalOffset {
 		l, size := bt.NewVarIntFromBytes(b[internalOffset:])
-		internalOffset += uint64(size)
+		// Safe conversion: size from VarInt is bounded by max varint size (9 bytes)
+		internalOffset += uint64(size) //nolint:gosec // size bounded by max varint size
 		response := b[internalOffset : internalOffset+uint64(l)]
 		internalOffset += uint64(l)
 		responses = append(responses, response)
@@ -139,7 +141,7 @@ func parseMapiCallbacks(b []byte) ([]*bc.MapiCallback, error) {
 	return mapiResponses, nil
 }
 
-func verifyInputOutputPair(_ *bt.Tx, _ *bscript.Script, _ *bscript.Script) bool {
+func verifyInputOutputPair(_ *bt.Tx, _, _ *bscript.Script) bool {
 	// TODO script interpreter.
 	return true
 }

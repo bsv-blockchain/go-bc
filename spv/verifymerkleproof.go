@@ -3,7 +3,6 @@ package spv
 import (
 	"context"
 	"encoding/hex"
-	"errors"
 	"fmt"
 
 	"github.com/bsv-blockchain/go-bt/v2"
@@ -116,7 +115,7 @@ func (v *verifier) VerifyMerkleProofJSON(ctx context.Context, proof *bc.MerklePr
 		// The `target` field contains a block hash
 
 		if len(proof.Target) != 64 {
-			return false, false, errors.New("invalid target field")
+			return false, false, ErrInvalidTarget
 		}
 
 		blockHeader, err := v.bhc.BlockHeader(ctx, proof.Target)
@@ -137,23 +136,23 @@ func (v *verifier) VerifyMerkleProofJSON(ctx context.Context, proof *bc.MerklePr
 		// the `target` field contains a merkle root
 		merkleRoot = proof.Target
 	} else {
-		return false, false, errors.New("invalid TargetType or target field")
+		return false, false, ErrInvalidTargetType
 	}
 
 	if proof.ProofType != "" && proof.ProofType != "branch" {
-		return false, false, errors.New("only merkle branch supported in this version") // merkle tree proof type not supported
+		return false, false, ErrOnlyMerkleBranchSupported // merkle tree proof type not supported
 	}
 
 	if proof.Composite { // OR if (proof.composite && proof.composite != false)
-		return false, false, errors.New("only single proof supported in this version") // composite proof type not supported
+		return false, false, ErrOnlySingleProofSupported // composite proof type not supported
 	}
 
 	if txid == "" {
-		return false, false, errors.New("txid missing")
+		return false, false, ErrTxidMissing
 	}
 
 	if merkleRoot == "" {
-		return false, false, errors.New("merkleRoot missing")
+		return false, false, ErrMerkleRootMissing
 	}
 
 	return verifyProof(txid, merkleRoot, proof.Index, proof.Nodes)
@@ -207,12 +206,12 @@ func verifyProof(c, merkleRoot string, index uint64, nodes []string) (bool, bool
 func validateTxOrID(flags byte, txOrID string) error {
 	// The `txOrId` field contains a full transaction
 	if len(txOrID) > 64 && flags&txOrIDFlag == 0 {
-		return errors.New("expecting txid but got tx")
+		return ErrExpectingTxidButGotTx
 	}
 
 	// The `txOrId` field contains a transaction ID
 	if len(txOrID) == 64 && flags&txOrIDFlag == 1 {
-		return errors.New("expecting tx but got txid")
+		return ErrExpectingTxButGotTxid
 	}
 
 	return nil
@@ -234,7 +233,7 @@ func txidFromTxOrID(txOrID string) (string, error) {
 		return tx.TxID(), nil
 	}
 
-	return "", errors.New("invalid txOrId length - must be at least 64 chars (32 bytes)")
+	return "", ErrInvalidTxOrIDLength
 }
 
 type merkleProofBinary struct {
@@ -271,12 +270,14 @@ func parseBinaryMerkleProof(proof []byte) (*merkleProofBinary, error) {
 		txLength, size = bt.NewVarIntFromBytes(proof[offset:])
 		offset += size
 		if txLength <= 32 {
-			return nil, errors.New("invalid tx length (should be greater than 32 bytes)")
+			return nil, ErrInvalidTxLength
 		}
 	}
 
 	// txOrID is the next txLength bytes after 1st byte + index size (+ txLength size)
+	//nolint:gosec // txLength validated above
 	mpb.txOrID = hex.EncodeToString(bt.ReverseBytes(proof[offset : offset+int(txLength)]))
+	//nolint:gosec // txLength validated above
 	offset += int(txLength)
 
 	switch mpb.flags & targetTypeFlags {
@@ -302,7 +303,7 @@ func parseBinaryMerkleProof(proof []byte) (*merkleProofBinary, error) {
 		return nil, ErrInvalidProof
 	}
 
-	for i := 0; i < int(nodeCount); i++ {
+	for i := 0; i < int(nodeCount); i++ { //nolint:gosec // nodeCount is from VarInt and bounded
 		t := proof[offset]
 		offset++
 
@@ -315,7 +316,7 @@ func parseBinaryMerkleProof(proof []byte) (*merkleProofBinary, error) {
 			n = "*"
 
 		default:
-			return nil, fmt.Errorf("invalid value in node type at index: %q", i)
+			return nil, fmt.Errorf("%w at index %d", ErrInvalidNodeType, i)
 		}
 
 		mpb.nodes = append(mpb.nodes, n)

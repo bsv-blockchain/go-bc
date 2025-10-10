@@ -3,7 +3,6 @@ package bc
 
 import (
 	"encoding/hex"
-	"errors"
 
 	"github.com/bsv-blockchain/go-bt/v2"
 )
@@ -64,7 +63,7 @@ func NewBlockFromStr(blockStr string) (*Block, error) {
 // See https://btcinformation.org/en/developer-reference#serialized-blocks
 func NewBlockFromBytes(b []byte) (*Block, error) {
 	if len(b) == 0 {
-		return nil, errors.New("block cannot be empty")
+		return nil, ErrBlockEmpty
 	}
 
 	var offset int
@@ -78,7 +77,9 @@ func NewBlockFromBytes(b []byte) (*Block, error) {
 	offset += size
 
 	var txs []*bt.Tx
-	for i := 0; i < int(txCount); i++ {
+	// Safe conversion: txCount should never exceed reasonable transaction count
+	txCountInt := int(txCount) //nolint:gosec // bounded by reasonable transaction count
+	for i := 0; i < txCountInt; i++ {
 		tx, size, err := bt.NewTxFromStream(b[offset:])
 		if err != nil {
 			return nil, err

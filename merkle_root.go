@@ -19,7 +19,7 @@ func TxsToTxIDs(txs []string) ([]string, error) {
 	for i, tx := range txs {
 		t, err := bt.NewTxFromString(tx)
 		if err != nil {
-			return nil, fmt.Errorf("invalid transaction at index: %q", i)
+			return nil, fmt.Errorf("%w at index %d", ErrInvalidTransaction, i)
 		}
 		txids = append(txids, t.TxID())
 	}

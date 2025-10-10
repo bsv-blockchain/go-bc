@@ -46,7 +46,7 @@ import (
 
 // BuildCoinbase recombines the different parts of the coinbase transaction.
 // See https://arxiv.org/pdf/1703.06545.pdf section 2.2 for more info.
-func BuildCoinbase(c1 []byte, c2 []byte, extraNonce1 string, extraNonce2 string) []byte {
+func BuildCoinbase(c1, c2 []byte, extraNonce1, extraNonce2 string) []byte {
 	e1, _ := hex.DecodeString(extraNonce1)
 	e2, _ := hex.DecodeString(extraNonce2)
 
@@ -60,22 +60,22 @@ func BuildCoinbase(c1 []byte, c2 []byte, extraNonce1 string, extraNonce2 string)
 
 // GetCoinbaseParts returns the two split coinbase parts from coinbase metadata.
 // See https://arxiv.org/pdf/1703.06545.pdf section 2.2 for more info.
-func GetCoinbaseParts(height uint32, coinbaseValue uint64, defaultWitnessCommitment string, coinbaseText string,
+func GetCoinbaseParts(height uint32, coinbaseValue uint64, defaultWitnessCommitment, coinbaseText string,
 	walletAddress string, minerIDBytes []byte,
-) (coinbase1 []byte, coinbase2 []byte, err error) {
+) (coinbase1, coinbase2 []byte, err error) {
 	coinbase1 = makeCoinbase1(height, coinbaseText)
 
 	ot, err := makeCoinbaseOutputTransactions(coinbaseValue, defaultWitnessCommitment, walletAddress, minerIDBytes)
 	if err != nil {
-		return
+		return nil, nil, err
 	}
 
 	coinbase2 = makeCoinbase2(ot)
 
-	return
+	return coinbase1, coinbase2, nil
 }
 
-func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitment string, wallet string, minerIDBytes []byte) ([]byte, error) {
+func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitment, wallet string, minerIDBytes []byte) ([]byte, error) {
 	tx := bt.NewTx()
 	err := tx.AddP2PKHOutputFromAddress(wallet, coinbaseValue)
 	if err != nil {
@@ -84,10 +84,13 @@ func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitme
 
 	o := tx.OutputIdx(0)
 
-	buf := make([]byte, 8)
+	// Create initial 8 bytes for coinbase value
+	valueBuf := make([]byte, 8)
+	binary.LittleEndian.PutUint64(valueBuf, coinbaseValue)
 
-	binary.LittleEndian.PutUint64(buf[0:], coinbaseValue)
-
+	// Initialize buf with zero length for proper appending
+	buf := make([]byte, 0, 8+len(*o.LockingScript)+10)
+	buf = append(buf, valueBuf...)
 	buf = append(buf, bt.VarInt(uint64(len(*o.LockingScript))).Bytes()...)
 	buf = append(buf, *o.LockingScript...)
 
@@ -115,7 +118,8 @@ func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitme
 		buf = append(buf, minerIDBytes...)
 	}
 
-	buf = append(bt.VarInt(uint64(numberOfTransactions)).Bytes(), buf...)
+	// Safe conversion: numberOfTransactions is small and bounded
+	buf = append(bt.VarInt(uint64(numberOfTransactions)).Bytes(), buf...) //nolint:gosec // numberOfTransactions is bounded (max 3)
 	return buf, nil
 }
 
@@ -135,14 +139,19 @@ func makeCoinbase1(height uint32, coinbaseText string) []byte {
 		arbitraryData = arbitraryData[:100-spaceForExtraNonce] // Slice the arbitrary text so everything fits in 100 bytes
 	}
 
-	buf := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buf, 1) // Version
+	// Create version bytes
+	versionBytes := make([]byte, 4)
+	binary.LittleEndian.PutUint32(versionBytes, 1) // Version
 
+	// Initialize buf with zero length and proper capacity
+	buf := make([]byte, 0, 150) // Estimate capacity for all data
+	buf = append(buf, versionBytes...)
 	buf = append(buf, 0x01)                              // Number of input transactions - always one
 	buf = append(buf, make([]byte, 32)...)               // Transaction hash - 4 bytes all bits are zero
 	buf = append(buf, []byte{0xff, 0xff, 0xff, 0xff}...) // Coinbase data size - 4 bytes - All bits are ones: 0xFFFFFFFF (ffffffff)
 
-	buf = append(buf, bt.VarInt(uint64(len(arbitraryData)+spaceForExtraNonce)).Bytes()...) // Length of the coinbase data, from 2 to 100 bytes
+	// Safe conversion: length is bounded to 100 bytes max
+	buf = append(buf, bt.VarInt(uint64(len(arbitraryData)+spaceForExtraNonce)).Bytes()...) //nolint:gosec // length bounded to 100 bytes max
 	buf = append(buf, arbitraryData...)
 
 	return buf

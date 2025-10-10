@@ -86,7 +86,7 @@ func MerkleRootFromBranches(txHash string, txIndex int, branches []string) (stri
 	}
 
 	if txIndex > 0 {
-		return "", fmt.Errorf("index %d out of range for proof of length %d", txIndex, len(branches))
+		return "", fmt.Errorf("%w: index %d for proof of length %d", ErrIndexOutOfRange, txIndex, len(branches))
 	}
 
 	return hex.EncodeToString(bt.ReverseBytes(hash)), nil

@@ -6,6 +6,9 @@ var (
 	// ErrNoTxInputs returns if an ancestry is attempted to be created from a transaction that has no inputs.
 	ErrNoTxInputs = errors.New("provided tx has no inputs to build ancestry from")
 
+	// ErrTxNotFound is returned when a transaction is not found in the store.
+	ErrTxNotFound = errors.New("tx not found")
+
 	// ErrPaymentNotVerified returns if a transaction in the tree provided was missed during verification.
 	ErrPaymentNotVerified = errors.New("a tx was missed during validation")
 
@@ -67,4 +70,43 @@ var (
 
 	// ErrInvalidNodes returns if there is a * on the left hand side within the node array.
 	ErrInvalidNodes = errors.New("invalid nodes")
+
+	// ErrTxGetterUndefined is returned when txGetterFunc in test is undefined.
+	ErrTxGetterUndefined = errors.New("txGetterFunc in test is undefined")
+
+	// ErrMpGetterUndefined is returned when mpGetterFunc in test is undefined.
+	ErrMpGetterUndefined = errors.New("mpGetterFunc in test is undefined")
+
+	// ErrInvalidTarget is returned when target field is invalid.
+	ErrInvalidTarget = errors.New("invalid target field")
+
+	// ErrInvalidTargetType is returned when TargetType or target field is invalid.
+	ErrInvalidTargetType = errors.New("invalid TargetType or target field")
+
+	// ErrOnlyMerkleBranchSupported is returned when a non-merkle branch proof format is used.
+	ErrOnlyMerkleBranchSupported = errors.New("only merkle branch supported in this version")
+
+	// ErrOnlySingleProofSupported is returned when multiple proofs are provided.
+	ErrOnlySingleProofSupported = errors.New("only single proof supported in this version")
+
+	// ErrTxidMissing is returned when txid is missing in proof.
+	ErrTxidMissing = errors.New("txid missing")
+
+	// ErrMerkleRootMissing is returned when merkle root is missing in proof.
+	ErrMerkleRootMissing = errors.New("merkleRoot missing")
+
+	// ErrExpectingTxidButGotTx is returned when txid is expected but tx is provided.
+	ErrExpectingTxidButGotTx = errors.New("expecting txid but got tx")
+
+	// ErrExpectingTxButGotTxid is returned when tx is expected but txid is provided.
+	ErrExpectingTxButGotTxid = errors.New("expecting tx but got txid")
+
+	// ErrInvalidTxOrIDLength is returned when txOrId length is invalid.
+	ErrInvalidTxOrIDLength = errors.New("invalid txOrId length - must be at least 64 chars (32 bytes)")
+
+	// ErrInvalidTxLength is returned when tx length is invalid.
+	ErrInvalidTxLength = errors.New("invalid tx length (should be greater than 32 bytes)")
+
+	// ErrInvalidNodeType is returned when node type value is invalid.
+	ErrInvalidNodeType = errors.New("invalid value in node type")
 )

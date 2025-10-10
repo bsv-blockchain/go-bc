@@ -3,7 +3,6 @@ package bc_test
 import (
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -77,15 +76,15 @@ func TestBlockHeaderInvalid(t *testing.T) {
 	}{
 		"empty string": {
 			expectedHeader: "",
-			expErr:         errors.New("block header should be 80 bytes long"),
+			expErr:         bc.ErrInvalidBlockHeaderLength,
 		},
 		"too long": {
 			expectedHeader: "00000020fb9eacea87c1cc294a4f1633a45b9bfb21cf9878b439c61123221312312312396b8ca3a856e3a37307cd123724eaa4ade23d29feea1358458d5c110275b6cca4e2b79cd14d98e39573460ffff7f2000000000",
-			expErr:         errors.New("block header should be 80 bytes long"),
+			expErr:         bc.ErrInvalidBlockHeaderLength,
 		},
 		"too short": {
 			expectedHeader: "00000020fb9eacea87c1c3a856e3a37307cd123724eaa4ade23d29feea1358458d5c110275b6cca4e2b79cd14d98e39573460ffff7f2000000000",
-			expErr:         errors.New("block header should be 80 bytes long"),
+			expErr:         bc.ErrInvalidBlockHeaderLength,
 		},
 	}
 	for name, test := range tests {

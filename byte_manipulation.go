@@ -57,7 +57,7 @@ func ReverseHexString(hex string) string {
 }
 
 // Equals checks if two byte arrays are equal.
-func Equals(b1 []byte, b2 []byte) bool {
+func Equals(b1, b2 []byte) bool {
 	if len(b1) != len(b2) {
 		return false
 	}

@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"math/big"
 
 	"github.com/bsv-blockchain/go-bt/v2"
@@ -98,7 +97,7 @@ func (bh *BlockHeader) Valid() bool {
 // See https://en.bitcoin.it/wiki/Block_hashing_algorithm
 func NewBlockHeaderFromStr(headerStr string) (*BlockHeader, error) {
 	if len(headerStr) != 160 {
-		return nil, errors.New("block header should be 80 bytes long")
+		return nil, ErrInvalidBlockHeaderLength
 	}
 
 	headerBytes, err := hex.DecodeString(headerStr)
@@ -115,7 +114,7 @@ func NewBlockHeaderFromStr(headerStr string) (*BlockHeader, error) {
 // See https://en.bitcoin.it/wiki/Block_hashing_algorithm
 func NewBlockHeaderFromBytes(headerBytes []byte) (*BlockHeader, error) {
 	if len(headerBytes) != 80 {
-		return nil, errors.New("block header should be 80 bytes long")
+		return nil, ErrInvalidBlockHeaderLength
 	}
 
 	return &BlockHeader{

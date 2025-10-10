@@ -36,7 +36,7 @@ func (c *creator) CreateTxAncestry(ctx context.Context, tx *bt.Tx) (*AncestryJSO
 			return nil, errors.Wrapf(err, "failed to get tx %s", pTxID)
 		}
 		if pTx == nil {
-			return nil, fmt.Errorf("could not find tx %s", pTxID)
+			return nil, fmt.Errorf("could not find tx %s: %w", pTxID, ErrTxNotFound)
 		}
 
 		// Check the store for a Merkle Proof for the current input.

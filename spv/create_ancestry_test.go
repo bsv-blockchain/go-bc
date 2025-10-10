@@ -17,6 +17,21 @@ import (
 	"github.com/bsv-blockchain/go-bc/testing/data"
 )
 
+var (
+	// Test errors for create_ancestry tests
+	errBigBad                       = errors.New("big bad error")
+	errBiggerBadder                 = errors.New("bigger badder error")
+	errCloseButNoCigar              = errors.New("close but no cigar")
+	errOhNo                         = errors.New("oh no")
+	errTxNotDefinedForTest          = errors.New("tx not defined for test")
+	errCouldNotFindTx36327872       = errors.New("could not find tx 36327872f3d4fb62f8dc0e0a746715df21b59f98f8a18848d703193fa61e55cb: tx not found")
+	errFailedToGetTx6915ee43        = errors.New("failed to get tx 6915ee43a9d12ffd63c064a83956a8d8dd296270054241bd379fb4ac1eda1347: big bad error")
+	errFailedToGetMerkleProofA7a97c = errors.New("failed to get merkle proof for tx a7a97cb7650b8ff1ee294f86653664adfbaef112d8813784a28b1c735b550d25: bigger badder error")
+	errCouldNotFindTxA8e76021       = errors.New("could not find tx a8e760210a8e3646ded829860745c60a2ade443d6998465dd0da5ae5f37b3b8e: tx not found")
+	errFailedToGetTx8fff14aa        = errors.New("failed to get tx 8fff14aabcad6ebd1da2ce7737751e1e1e4c9c0d4c5b8abfef7e7914556d7965: close but no cigar")
+	errFailedToGetMerkleProof3fa9a1 = errors.New("failed to get merkle proof for tx 3fa9a1a20c1f4dbd2c3dd5866749621ebe15c7290c13080ba0d45ab9c649cc15: oh no")
+)
+
 type mockTxMerkleGetter struct {
 	txStoreFunc func(context.Context, string) (*bt.Tx, error)
 	mpStoreFunc func(context.Context, string) (*bc.MerkleProof, error)
@@ -24,7 +39,7 @@ type mockTxMerkleGetter struct {
 
 func (m *mockTxMerkleGetter) Tx(ctx context.Context, txID string) (*bt.Tx, error) {
 	if m.txStoreFunc == nil {
-		return nil, errors.New("txGetterFunc in test is undefined")
+		return nil, spv.ErrTxGetterUndefined
 	}
 
 	return m.txStoreFunc(ctx, txID)
@@ -32,7 +47,7 @@ func (m *mockTxMerkleGetter) Tx(ctx context.Context, txID string) (*bt.Tx, error
 
 func (m *mockTxMerkleGetter) MerkleProof(ctx context.Context, txID string) (*bc.MerkleProof, error) {
 	if m.txStoreFunc == nil {
-		return nil, errors.New("mpGetterFunc in test is undefined")
+		return nil, spv.ErrMpGetterUndefined
 	}
 
 	return m.mpStoreFunc(ctx, txID)
@@ -59,7 +74,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "36327872f3d4fb62f8dc0e0a746715df21b59f98f8a18848d703193fa61e55cb":
 					return bt.NewTxFromString("0200000001e65bf7813ee5bf1793a3487c2701f73b1b47f56fe7f7f36d7ee64b8987563f42000000004847304402206a9fe9ae02ecc95f8a90833707f9d04574618c6b9bb70ec67e5a16c1d04e08090220524fff062a60f03bf6560b392791b73982331f75e72afdd51a0b1d58d9bffe3e41feffffff0240101024010000001976a9144685874765a3e652d6869f5651d19000302275a888ac00e1f505000000001976a914b9be6c0240ce6137722a5ef28121d5967ce1049f88ac67000000")
 				default:
-					return nil, fmt.Errorf("txid %s not defined for test", txID)
+					return nil, fmt.Errorf("txid %s not defined for test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
@@ -110,7 +125,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
@@ -130,7 +145,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "36327872f3d4fb62f8dc0e0a746715df21b59f98f8a18848d703193fa61e55cb":
 					return nil, nil //nolint:nilnil // this is for a test
 				default:
-					return nil, fmt.Errorf("txid %s not defined for test", txID)
+					return nil, fmt.Errorf("txid %s not defined for test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
@@ -181,12 +196,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
 			},
-			expErr: errors.New("could not find tx 36327872f3d4fb62f8dc0e0a746715df21b59f98f8a18848d703193fa61e55cb"),
+			expErr: errCouldNotFindTx36327872,
 		},
 		"error when getting tx is handled": {
 			tx: "0200000005c931fb0af1eedc1fcb1c00171c80fcdef48564d3a8582dd530a9ba258497b1ea000000006a473044022011dd49f90eb34195e61712cef41d16ce9496807124b1e1c6205cb06ccfdbef0002203b2553032d166724d89a42a12b997cb1c4a78c4d8bbc72f94ab9ef4c3db36d38412103f6e8ebb2836f89aedbe712fa91eda827df597a01fe1a19fa1658bc1d28d1ad15feffffffc931fb0af1eedc1fcb1c00171c80fcdef48564d3a8582dd530a9ba258497b1ea010000006b483045022100f8a92d8e09a239d863b57c44fd2915558afbe05074c992b72639288f15a5a928022047399d49fcc7354140ecec229fe682383a9e9c59e43da368d35d211a06a17f2641210363d67968518ee1c0485b9b95544c0a9ec8c280b649b72c74fe86c299cd055a3bfeffffff250d555b731c8ba2843781d812f1aefbad643665864f29eef18f0b65b77ca9a7010000006b483045022100ece110a2ae06c67f3d4b25ad4ec2d7acf85fa1618dabef9d7eed5b4e5c50bbea02207716c2a9dd8d1ce64a56a3377eb35892db42dbba62058ebeb1b14ca33a8b98c241210241f2c990d7e0fe5c1c5e4508883b76b9786fcc67ccee1b8724eefa89a8f32981feffffff4713da1eacb49f37bd414205706229ddd8a85639a864c063fd2fd1a943ee1569010000006b483045022100831aac063f1b32f9e5645c5442a6b15cb620c6c49930f0194fa6acf6c864f48202203a8cc93d8bcd6f7d86cac0c7c99485cc1837fc87790f13f5bbf2f3b901e86be341210376c2519a09f7cfbcbe000f823c1e957cadace64296e907ae1ea36536313f0706feffffffcb551ea63f1903d74888a1f8989fb521df1567740a0edcf862fbd4f372783236010000006b483045022100f0fa4ab61952f5497d4dfe6b7a4e5e9b3305a5b94b0d7a6d1536927dfea2aa4202205eaa36045812bf5561c9e3a38fc92e6d89908637a5c0ec250a843f36355418c2412103f6e8ebb2836f89aedbe712fa91eda827df597a01fe1a19fa1658bc1d28d1ad15feffffff02bccdf505000000001976a914349256bff9dbe79285454d0e55d1a3163bd6dff888ac0084d717000000001976a914e2e4d329a79401e0a713210a4c615abdc540eda888ac68000000",
@@ -197,9 +212,9 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "a7a97cb7650b8ff1ee294f86653664adfbaef112d8813784a28b1c735b550d25":
 					return bt.NewTxFromString("0200000002fa77c2cafc9d4e47792debdfbc812882fbdf7e5d08b9fa9751a7ee079be176a1010000006b483045022100c406943f8804eed1a4021d6f7b91c3f9b294b43b1bde8f221d395b503c312e390220351399f0ccafa9a469dd280317903168d2c4a0623440c828451711c8e4d9e24241210348ec9620f94ce08b6c422fc08e5156a4fa23229cdab9608065baf3a0ba33391bfeffffff4bcbb7ca743245103b7c31c75845acfbe7ecaa62b90728fd3d9d0da81b0f5549000000006a4730440220658519a33702c58c6556be863f324b705cf7e6e8b7f255356351531d7064028002204c16dc99b12d7202f0e56a32408433425f48b67d22be9d491f843e51cb84c5fc4121020cbd8a7a8cac2f87a8e606061569e89488416af21967a2da635fe25ee157f5fdfeffffff0200e1f505000000001976a914b9be6c0240ce6137722a5ef28121d5967ce1049f88acdad3f505000000001976a914e3e56e8e16fc7a694cdd585dac37a5c26dbae93688ac67000000")
 				case "6915ee43a9d12ffd63c064a83956a8d8dd296270054241bd379fb4ac1eda1347":
-					return nil, errors.New("big bad error")
+					return nil, errBigBad
 				default:
-					return nil, fmt.Errorf("txid %s not defined for test", txID)
+					return nil, fmt.Errorf("txid %s not defined for test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
@@ -250,12 +265,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
 			},
-			expErr: errors.New("failed to get tx 6915ee43a9d12ffd63c064a83956a8d8dd296270054241bd379fb4ac1eda1347: big bad error"),
+			expErr: errFailedToGetTx6915ee43,
 		},
 		"error when getting merkle proof is handled": {
 			tx: "0200000005c931fb0af1eedc1fcb1c00171c80fcdef48564d3a8582dd530a9ba258497b1ea000000006a473044022011dd49f90eb34195e61712cef41d16ce9496807124b1e1c6205cb06ccfdbef0002203b2553032d166724d89a42a12b997cb1c4a78c4d8bbc72f94ab9ef4c3db36d38412103f6e8ebb2836f89aedbe712fa91eda827df597a01fe1a19fa1658bc1d28d1ad15feffffffc931fb0af1eedc1fcb1c00171c80fcdef48564d3a8582dd530a9ba258497b1ea010000006b483045022100f8a92d8e09a239d863b57c44fd2915558afbe05074c992b72639288f15a5a928022047399d49fcc7354140ecec229fe682383a9e9c59e43da368d35d211a06a17f2641210363d67968518ee1c0485b9b95544c0a9ec8c280b649b72c74fe86c299cd055a3bfeffffff250d555b731c8ba2843781d812f1aefbad643665864f29eef18f0b65b77ca9a7010000006b483045022100ece110a2ae06c67f3d4b25ad4ec2d7acf85fa1618dabef9d7eed5b4e5c50bbea02207716c2a9dd8d1ce64a56a3377eb35892db42dbba62058ebeb1b14ca33a8b98c241210241f2c990d7e0fe5c1c5e4508883b76b9786fcc67ccee1b8724eefa89a8f32981feffffff4713da1eacb49f37bd414205706229ddd8a85639a864c063fd2fd1a943ee1569010000006b483045022100831aac063f1b32f9e5645c5442a6b15cb620c6c49930f0194fa6acf6c864f48202203a8cc93d8bcd6f7d86cac0c7c99485cc1837fc87790f13f5bbf2f3b901e86be341210376c2519a09f7cfbcbe000f823c1e957cadace64296e907ae1ea36536313f0706feffffffcb551ea63f1903d74888a1f8989fb521df1567740a0edcf862fbd4f372783236010000006b483045022100f0fa4ab61952f5497d4dfe6b7a4e5e9b3305a5b94b0d7a6d1536927dfea2aa4202205eaa36045812bf5561c9e3a38fc92e6d89908637a5c0ec250a843f36355418c2412103f6e8ebb2836f89aedbe712fa91eda827df597a01fe1a19fa1658bc1d28d1ad15feffffff02bccdf505000000001976a914349256bff9dbe79285454d0e55d1a3163bd6dff888ac0084d717000000001976a914e2e4d329a79401e0a713210a4c615abdc540eda888ac68000000",
@@ -270,12 +285,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "36327872f3d4fb62f8dc0e0a746715df21b59f98f8a18848d703193fa61e55cb":
 					return bt.NewTxFromString("0200000001e65bf7813ee5bf1793a3487c2701f73b1b47f56fe7f7f36d7ee64b8987563f42000000004847304402206a9fe9ae02ecc95f8a90833707f9d04574618c6b9bb70ec67e5a16c1d04e08090220524fff062a60f03bf6560b392791b73982331f75e72afdd51a0b1d58d9bffe3e41feffffff0240101024010000001976a9144685874765a3e652d6869f5651d19000302275a888ac00e1f505000000001976a914b9be6c0240ce6137722a5ef28121d5967ce1049f88ac67000000")
 				default:
-					return nil, fmt.Errorf("txid %s not defined for test", txID)
+					return nil, fmt.Errorf("txid %s not defined for test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
 				if txID == "a7a97cb7650b8ff1ee294f86653664adfbaef112d8813784a28b1c735b550d25" {
-					return nil, errors.New("bigger badder error")
+					return nil, errBiggerBadder
 				}
 				mp, ok := map[string]*bc.MerkleProof{
 					"2a65d19f8d29ce53beb0f0e636a1d7b368d5c87b67cd3164277a7d29b66a636e": nil,
@@ -313,12 +328,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
 			},
-			expErr: errors.New("failed to get merkle proof for tx a7a97cb7650b8ff1ee294f86653664adfbaef112d8813784a28b1c735b550d25: bigger badder error"),
+			expErr: errFailedToGetMerkleProofA7a97c,
 		},
 		"ancestry needing multiple layers can be built": {
 			tx: "02000000054e5113bf8330981b4f063d95d18540bc09016843347437ace0133f27c830a518000000006a47304402204455d7f4e1ccf6c8aa47e7b99349e02aadc80474e3c8b9b479d2d5aa98eb954402206a3ac9cc086bb03cb4a9db872fbb46d682f1036dd5e51d910484d62651eaad124121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff531d1d4246046ad2e67636965b682509d0d021badf1ed95177b2e27a80e2020a000000006b483045022100a0882e9db7ff299178211b7223ee891119d22374c8e2ce21aec00daaad5e170102207af1d17b4d9ed4f9684e520f709239fded50f3ea7d5ec7a9e458ab00a2efffea412102e9fab6eb7648af9cd3719224062bfec10863ea9ba7a2caf26384705bc4387569feffffff531d1d4246046ad2e67636965b682509d0d021badf1ed95177b2e27a80e2020a010000006b483045022100b1d5b94ce9b5a1c8b531757aff4439bfb426dc439c3e35f6cdc3a08c9657ea0c02203c8490252d52db4557032042a5dcc8c3a2cdd9378dfd38f5ca03a9940ca055a2412103b05c23dcb06d192490d83c39bfbb515dfd0c0c172ae9314c91824b8936459132feffffffcd6b25094891d60413d5b50a4f6309574d648b9af6dbe782aa3510b18a0759fa010000006b483045022100bda388d23ccbea1beb3b1b55387600ae1b54759844beca4e9bcd405c2665b1a902206e536756978ffc3812c12f6eeeb82de351e13ad70d9e93c2358eb8a3c315330d4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff99995c0c19cda01cec64b7e20a3df37920bd3ad1ba6e666e337cb37d7829b354000000006a47304402205d6ebce84aeaf337c81894ffce89cc21a59a8659d07a599bb3371e5fee89153c02204432f8fae576e0aa47122d2dfbc914a6a34813fba86ecd0fcf0dd7ca65d199df4121034fc957d2e5b7299624148b914e830c763532983979c4cb3df29cca2751982d9afeffffff0282c3f505000000001976a9147fcac6c6eabf96ea58e561d3880f8e68bc58574088ac0027b929000000001976a9142d58ec9527c3df1ada4cac18cde85beb57cb199588ac68000000",
@@ -353,7 +368,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "0cfa7fa94ee793c602fd422b7f82860f90f7bf849d0d287a177cb834bc9a6754":
 					return bt.NewTxFromString("020000000200e92171fa60dc137fa092461aebb3712059fcce36f7679b044184ff1d36ac64000000006b483045022100a68c77642ef5822c54c681b8ae5e7e8ae978bca1816feb1323aadcaf07eb7aed02205dcfe11c74a76c15791f8577b0793ff48b700da9cd035cc0edbfb74a9bc4d9ca4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff15cc49c6b95ad4a00b08130c29c715be1e62496786d53d2cbd4d1f0ca2a1a93f000000006a47304402203789ab8d5bdf2058132c22a4cd598d63ddb140888ebf321e0093b9c942c51ed5022046eb9e5b3b66de8d2fc3a47e732d34c5025ac8a5bba7f7aeeb293e1720824486412102d1060dc67e81ed3c2d2d072c9840531e2a9f61f6e924a41eca17a2564a0ed577feffffff0200e1f505000000001976a914710b36a8bb8db72b23d1bcfe60f83b7ef1b9f60088ac9edcf505000000001976a914289b4e36e2272b2dd561f0e6aeab5fcb5a9256c488ac65000000")
 				}
-				return nil, fmt.Errorf("tx %s not defined for test", txID)
+				return nil, errTxNotDefinedForTest
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
 				mp, ok := map[string]*bc.MerkleProof{
@@ -433,7 +448,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
@@ -473,7 +488,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "0cfa7fa94ee793c602fd422b7f82860f90f7bf849d0d287a177cb834bc9a6754":
 					return bt.NewTxFromString("020000000200e92171fa60dc137fa092461aebb3712059fcce36f7679b044184ff1d36ac64000000006b483045022100a68c77642ef5822c54c681b8ae5e7e8ae978bca1816feb1323aadcaf07eb7aed02205dcfe11c74a76c15791f8577b0793ff48b700da9cd035cc0edbfb74a9bc4d9ca4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff15cc49c6b95ad4a00b08130c29c715be1e62496786d53d2cbd4d1f0ca2a1a93f000000006a47304402203789ab8d5bdf2058132c22a4cd598d63ddb140888ebf321e0093b9c942c51ed5022046eb9e5b3b66de8d2fc3a47e732d34c5025ac8a5bba7f7aeeb293e1720824486412102d1060dc67e81ed3c2d2d072c9840531e2a9f61f6e924a41eca17a2564a0ed577feffffff0200e1f505000000001976a914710b36a8bb8db72b23d1bcfe60f83b7ef1b9f60088ac9edcf505000000001976a914289b4e36e2272b2dd561f0e6aeab5fcb5a9256c488ac65000000")
 				}
-				return nil, fmt.Errorf("tx %s not defined for test", txID)
+				return nil, errTxNotDefinedForTest
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
 				mp, ok := map[string]*bc.MerkleProof{
@@ -553,12 +568,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
 			},
-			expErr: errors.New("could not find tx a8e760210a8e3646ded829860745c60a2ade443d6998465dd0da5ae5f37b3b8e"),
+			expErr: errCouldNotFindTxA8e76021,
 		},
 		"error getting tx multiple layers down is handled": {
 			tx: "02000000054e5113bf8330981b4f063d95d18540bc09016843347437ace0133f27c830a518000000006a47304402204455d7f4e1ccf6c8aa47e7b99349e02aadc80474e3c8b9b479d2d5aa98eb954402206a3ac9cc086bb03cb4a9db872fbb46d682f1036dd5e51d910484d62651eaad124121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff531d1d4246046ad2e67636965b682509d0d021badf1ed95177b2e27a80e2020a000000006b483045022100a0882e9db7ff299178211b7223ee891119d22374c8e2ce21aec00daaad5e170102207af1d17b4d9ed4f9684e520f709239fded50f3ea7d5ec7a9e458ab00a2efffea412102e9fab6eb7648af9cd3719224062bfec10863ea9ba7a2caf26384705bc4387569feffffff531d1d4246046ad2e67636965b682509d0d021badf1ed95177b2e27a80e2020a010000006b483045022100b1d5b94ce9b5a1c8b531757aff4439bfb426dc439c3e35f6cdc3a08c9657ea0c02203c8490252d52db4557032042a5dcc8c3a2cdd9378dfd38f5ca03a9940ca055a2412103b05c23dcb06d192490d83c39bfbb515dfd0c0c172ae9314c91824b8936459132feffffffcd6b25094891d60413d5b50a4f6309574d648b9af6dbe782aa3510b18a0759fa010000006b483045022100bda388d23ccbea1beb3b1b55387600ae1b54759844beca4e9bcd405c2665b1a902206e536756978ffc3812c12f6eeeb82de351e13ad70d9e93c2358eb8a3c315330d4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff99995c0c19cda01cec64b7e20a3df37920bd3ad1ba6e666e337cb37d7829b354000000006a47304402205d6ebce84aeaf337c81894ffce89cc21a59a8659d07a599bb3371e5fee89153c02204432f8fae576e0aa47122d2dfbc914a6a34813fba86ecd0fcf0dd7ca65d199df4121034fc957d2e5b7299624148b914e830c763532983979c4cb3df29cca2751982d9afeffffff0282c3f505000000001976a9147fcac6c6eabf96ea58e561d3880f8e68bc58574088ac0027b929000000001976a9142d58ec9527c3df1ada4cac18cde85beb57cb199588ac68000000",
@@ -585,7 +600,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "bb9b6a23ff0fa9569c0c2f3d77f8f7492a1f7c61095a15b88be9b5b4dbba4de4":
 					return bt.NewTxFromString("0200000001742ee0a5307c56206abd6ec38026264ae67ac8475f7b7ce0cff8bccce15096f40000000049483045022100abc541d0ffa5157c7376204fec2ad89cf4c22c173dd292b1bb4ef6dadcd0fb2702203f2794a04d1a161a1d17bc4d2df7fe09c04c7fcd9b1b966e4cec324fd134ff0f41feffffff02406d2e12010000001976a914eb0db95d9be7c1489d7a6cbbfdff4eeb2a403d2988ac0084d717000000001976a914dc962131132838bef756349f2d70d7165107f46488ac35000000")
 				case "8fff14aabcad6ebd1da2ce7737751e1e1e4c9c0d4c5b8abfef7e7914556d7965":
-					return nil, errors.New("close but no cigar")
+					return nil, errCloseButNoCigar
 				case "a8e760210a8e3646ded829860745c60a2ade443d6998465dd0da5ae5f37b3b8e":
 					return bt.NewTxFromString("020000000238790efd7544693746ebab3ffedd146182d2038718c2ebb27102dcd82b1bad72000000006a47304402202681f4bf3620bb2fc538212ca8e51911c24085567f905ae86dd2d8c1131d84cc022023f59800ba85c5e006cd0908176528e39ce336326d8f2161189a9ac7c7d6b9124121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff38790efd7544693746ebab3ffedd146182d2038718c2ebb27102dcd82b1bad72010000006a47304402203ce2f5fec7aa340f12577a38ee1192b8096f384f7b02ed2640f73f6ac06aaefe02202ae0650d3ff7a0c7442ea43dd0257844c0be30458a84e7796a948f21a6ff0106412103c21ad3a4808ac02b1038281dc2e336a1892bdba484b82dfa6efbb073aeea0c6efeffffff0216cbf505000000001976a914f5fa8c0dc33e58d73f05cd97a83bf0967b44de7788ac00e1f505000000001976a914710b36a8bb8db72b23d1bcfe60f83b7ef1b9f60088ac65000000")
 				case "8f58f5d122121409fdcedddd9cb28d6d2e359fde5652b89d3543baddb8e11a0b":
@@ -593,7 +608,7 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "0cfa7fa94ee793c602fd422b7f82860f90f7bf849d0d287a177cb834bc9a6754":
 					return bt.NewTxFromString("020000000200e92171fa60dc137fa092461aebb3712059fcce36f7679b044184ff1d36ac64000000006b483045022100a68c77642ef5822c54c681b8ae5e7e8ae978bca1816feb1323aadcaf07eb7aed02205dcfe11c74a76c15791f8577b0793ff48b700da9cd035cc0edbfb74a9bc4d9ca4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff15cc49c6b95ad4a00b08130c29c715be1e62496786d53d2cbd4d1f0ca2a1a93f000000006a47304402203789ab8d5bdf2058132c22a4cd598d63ddb140888ebf321e0093b9c942c51ed5022046eb9e5b3b66de8d2fc3a47e732d34c5025ac8a5bba7f7aeeb293e1720824486412102d1060dc67e81ed3c2d2d072c9840531e2a9f61f6e924a41eca17a2564a0ed577feffffff0200e1f505000000001976a914710b36a8bb8db72b23d1bcfe60f83b7ef1b9f60088ac9edcf505000000001976a914289b4e36e2272b2dd561f0e6aeab5fcb5a9256c488ac65000000")
 				}
-				return nil, fmt.Errorf("tx %s not defined for test", txID)
+				return nil, errTxNotDefinedForTest
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
 				mp, ok := map[string]*bc.MerkleProof{
@@ -673,12 +688,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
 			},
-			expErr: errors.New("failed to get tx 8fff14aabcad6ebd1da2ce7737751e1e1e4c9c0d4c5b8abfef7e7914556d7965: close but no cigar"),
+			expErr: errFailedToGetTx8fff14aa,
 		},
 		"error getting merkle proof multiple layers down is handled": {
 			tx: "02000000054e5113bf8330981b4f063d95d18540bc09016843347437ace0133f27c830a518000000006a47304402204455d7f4e1ccf6c8aa47e7b99349e02aadc80474e3c8b9b479d2d5aa98eb954402206a3ac9cc086bb03cb4a9db872fbb46d682f1036dd5e51d910484d62651eaad124121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff531d1d4246046ad2e67636965b682509d0d021badf1ed95177b2e27a80e2020a000000006b483045022100a0882e9db7ff299178211b7223ee891119d22374c8e2ce21aec00daaad5e170102207af1d17b4d9ed4f9684e520f709239fded50f3ea7d5ec7a9e458ab00a2efffea412102e9fab6eb7648af9cd3719224062bfec10863ea9ba7a2caf26384705bc4387569feffffff531d1d4246046ad2e67636965b682509d0d021badf1ed95177b2e27a80e2020a010000006b483045022100b1d5b94ce9b5a1c8b531757aff4439bfb426dc439c3e35f6cdc3a08c9657ea0c02203c8490252d52db4557032042a5dcc8c3a2cdd9378dfd38f5ca03a9940ca055a2412103b05c23dcb06d192490d83c39bfbb515dfd0c0c172ae9314c91824b8936459132feffffffcd6b25094891d60413d5b50a4f6309574d648b9af6dbe782aa3510b18a0759fa010000006b483045022100bda388d23ccbea1beb3b1b55387600ae1b54759844beca4e9bcd405c2665b1a902206e536756978ffc3812c12f6eeeb82de351e13ad70d9e93c2358eb8a3c315330d4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff99995c0c19cda01cec64b7e20a3df37920bd3ad1ba6e666e337cb37d7829b354000000006a47304402205d6ebce84aeaf337c81894ffce89cc21a59a8659d07a599bb3371e5fee89153c02204432f8fae576e0aa47122d2dfbc914a6a34813fba86ecd0fcf0dd7ca65d199df4121034fc957d2e5b7299624148b914e830c763532983979c4cb3df29cca2751982d9afeffffff0282c3f505000000001976a9147fcac6c6eabf96ea58e561d3880f8e68bc58574088ac0027b929000000001976a9142d58ec9527c3df1ada4cac18cde85beb57cb199588ac68000000",
@@ -713,11 +728,11 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 				case "0cfa7fa94ee793c602fd422b7f82860f90f7bf849d0d287a177cb834bc9a6754":
 					return bt.NewTxFromString("020000000200e92171fa60dc137fa092461aebb3712059fcce36f7679b044184ff1d36ac64000000006b483045022100a68c77642ef5822c54c681b8ae5e7e8ae978bca1816feb1323aadcaf07eb7aed02205dcfe11c74a76c15791f8577b0793ff48b700da9cd035cc0edbfb74a9bc4d9ca4121024d62a2e85bd2c310a2a43b2f17e4312381209276424fb634bd89325068997091feffffff15cc49c6b95ad4a00b08130c29c715be1e62496786d53d2cbd4d1f0ca2a1a93f000000006a47304402203789ab8d5bdf2058132c22a4cd598d63ddb140888ebf321e0093b9c942c51ed5022046eb9e5b3b66de8d2fc3a47e732d34c5025ac8a5bba7f7aeeb293e1720824486412102d1060dc67e81ed3c2d2d072c9840531e2a9f61f6e924a41eca17a2564a0ed577feffffff0200e1f505000000001976a914710b36a8bb8db72b23d1bcfe60f83b7ef1b9f60088ac9edcf505000000001976a914289b4e36e2272b2dd561f0e6aeab5fcb5a9256c488ac65000000")
 				}
-				return nil, fmt.Errorf("tx %s not defined for test", txID)
+				return nil, errTxNotDefinedForTest
 			},
 			mpFunc: func(_ context.Context, txID string) (*bc.MerkleProof, error) {
 				if txID == "3fa9a1a20c1f4dbd2c3dd5866749621ebe15c7290c13080ba0d45ab9c649cc15" {
-					return nil, errors.New("oh no")
+					return nil, errOhNo
 				}
 				mp, ok := map[string]*bc.MerkleProof{
 					"18a530c8273f13e0ac37743443680109bc4085d1953d064f1b983083bf13514e": nil,
@@ -784,12 +799,12 @@ func TestSPVEnvelope_CreateEnvelope(t *testing.T) {
 					},
 				}[txID]
 				if !ok {
-					return nil, fmt.Errorf("merkle proof for tx %s not defined in test", txID)
+					return nil, fmt.Errorf("merkle proof for tx %s not defined in test: %w", txID, spv.ErrNotAllInputsSupplied)
 				}
 
 				return mp, nil
 			},
-			expErr: errors.New("failed to get merkle proof for tx 3fa9a1a20c1f4dbd2c3dd5866749621ebe15c7290c13080ba0d45ab9c649cc15: oh no"),
+			expErr: errFailedToGetMerkleProof3fa9a1,
 		},
 	}
 
