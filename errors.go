@@ -2,11 +2,13 @@ package bc
 
 import "errors"
 
+const errInvalidBlockHeaderLengthMsg = "block header should be 80 bytes long"
+
 // Package-level error definitions for consistent error handling
 var (
 	// Block errors
 	ErrBlockEmpty               = errors.New("block cannot be empty")
-	ErrInvalidBlockHeaderLength = errors.New("block header should be 80 bytes long")
+	ErrInvalidBlockHeaderLength = errors.New(errInvalidBlockHeaderLengthMsg)
 
 	// BUMP errors
 	ErrInsufficientBUMPData = errors.New("BUMP bytes do not contain enough data to be valid")
