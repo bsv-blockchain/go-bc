@@ -131,7 +131,7 @@ func TestVerifyBlockHeader(t *testing.T) {
 	assert.False(t, genesisInvalid.Valid())
 }
 
-func TestBlockHeader_MarshalJSON(t *testing.T) {
+func TestBlockHeaderMarshalJSON(t *testing.T) {
 	t.Parallel()
 
 	tests := map[string]struct {
@@ -192,7 +192,7 @@ func TestBlockHeader_MarshalJSON(t *testing.T) {
 	}
 }
 
-func TestBlockHeader_UnmarshalJSON(t *testing.T) {
+func TestBlockHeaderUnmarshalJSON(t *testing.T) {
 	t.Parallel()
 
 	tests := map[string]struct {
