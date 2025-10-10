@@ -25,12 +25,12 @@ func TestDifficultyToHashrateRSV(t *testing.T) {
 	}
 }
 
-func TestExpandTargetFrom_GenesisBlock(t *testing.T) {
+func TestExpandTargetFromGenesisBlock(t *testing.T) {
 	expected := "00000000ffff0000000000000000000000000000000000000000000000000000"
 	got, _ := bc.ExpandTargetFrom("1d00ffff")
 
 	if got != expected {
-		t.Errorf("Expected result to be %s, got '%s", expected, got)
+		t.Errorf("Expected result to be %s, got '%s'", expected, got)
 	}
 }
 
@@ -39,11 +39,11 @@ func TestExpandTargetFrom(t *testing.T) {
 	got, _ := bc.ExpandTargetFrom("182815ee")
 
 	if got != expected {
-		t.Errorf("Expected result to be %s, got '%s", expected, got)
+		t.Errorf("Expected result to be %s, got '%s'", expected, got)
 	}
 }
 
-func TestExpandTargetFrom_InvalidBits(t *testing.T) {
+func TestExpandTargetFromInvalidBits(t *testing.T) {
 	_, err := bc.ExpandTargetFrom("invalidBgolaits")
 	if err == nil {
 		t.Errorf("Expected an error to be thrown\n")
