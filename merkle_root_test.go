@@ -3,10 +3,10 @@ package bc_test
 import (
 	"testing"
 
+	"github.com/bsv-blockchain/go-sdk/chainhash"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bsv-blockchain/go-bc"
-	"github.com/bsv-blockchain/go-sdk/chainhash"
 )
 
 func TestBuildMerkleRoot(t *testing.T) {

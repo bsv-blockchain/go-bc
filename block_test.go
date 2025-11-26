@@ -5,9 +5,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/bsv-blockchain/go-bc"
 	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bsv-blockchain/go-bc"
 )
 
 var errHexOddLength = errors.New("encoding/hex: odd length hex string")

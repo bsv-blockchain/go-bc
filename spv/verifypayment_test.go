@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/bsv-blockchain/go-bt/v2"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bsv-blockchain/go-bc"
 	"github.com/bsv-blockchain/go-bc/spv"
 	"github.com/bsv-blockchain/go-bc/testing/data"
-	"github.com/bsv-blockchain/go-bt/v2"
 )
 
 type mockBlockHeaderClient struct {

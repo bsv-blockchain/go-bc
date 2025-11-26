@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/bsv-blockchain/go-bc"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/bsv-blockchain/go-bc"
 )
 
 func TestBuildingMerklePathBinary(t *testing.T) {
