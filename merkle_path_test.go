@@ -88,7 +88,7 @@ func TestGetMerklePath(t *testing.T) {
 	// build path for tx index 4.
 	path := bc.GetTxMerklePath(4, merkles)
 	// Safe conversion: Index is bounded by the number of transactions in the block
-	pathIndex := int(path.Index) //nolint:gosec // Index bounded by transaction count
+	pathIndex := int(path.Index)
 	root, err := bc.MerkleRootFromBranches("e3aa0230aa81abd483023886ad12790acf070e2a9f92d7f0ae3bebd90a904361", pathIndex, path.Path)
 	require.NoError(t, err)
 	require.Equal(t, expected, root)
@@ -115,7 +115,7 @@ func TestGetMerklePathOddPosition(t *testing.T) {
 	// build path for tx index 4.
 	path := bc.GetTxMerklePath(4, merkles)
 	// Safe conversion: Index is bounded by the number of transactions in the block
-	pathIndex := int(path.Index) //nolint:gosec // Index bounded by transaction count
+	pathIndex := int(path.Index)
 	root, err := bc.MerkleRootFromBranches("e3aa0230aa81abd483023886ad12790acf070e2a9f92d7f0ae3bebd90a904361", pathIndex, path.Path)
 	require.NoError(t, err)
 	require.Equal(t, merkles[len(merkles)-1], root)
@@ -132,7 +132,7 @@ func TestGetMerklePathEmptyPath(t *testing.T) {
 	// build path for tx index 4.
 	path := bc.GetTxMerklePath(0, merkles)
 	// Safe conversion: Index is bounded by the number of transactions in the block
-	pathIndex := int(path.Index) //nolint:gosec // Index bounded by transaction count
+	pathIndex := int(path.Index)
 	root, err := bc.MerkleRootFromBranches("b6d4d13aa08bb4b6cdb3b329cef29b5a5d55d85a85c330d56fddbce78d99c7d6", pathIndex, path.Path)
 	require.NoError(t, err)
 	require.Equal(t, merkles[len(merkles)-1], root)

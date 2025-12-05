@@ -67,7 +67,7 @@ func TestNewBUMPFromMerkleTree(t *testing.T) {
 	}
 	merkles := BuildMerkleTreeStoreChainHash(chainHashBlock)
 	for txIndex, txid := range blockTxExample {
-		bump, err := NewBUMPFromMerkleTreeAndIndex(fakeMadeUpNum, merkles, uint64(txIndex)) //nolint:gosec // txIndex is bounded by block tx count
+		bump, err := NewBUMPFromMerkleTreeAndIndex(fakeMadeUpNum, merkles, uint64(txIndex))
 		require.NoError(t, err)
 		root, err := bump.CalculateRootGivenTxid(txid)
 		require.NoError(t, err)
@@ -108,7 +108,7 @@ func TestTestnetCalculateRootGivenTxid(t *testing.T) {
 	}
 	merkles := BuildMerkleTreeStoreChainHash(chainHashBlock)
 	for txIndex, txid := range testnetBlockExample {
-		bump, err := NewBUMPFromMerkleTreeAndIndex(1575794, merkles, uint64(txIndex)) //nolint:gosec // txIndex is bounded by block tx count
+		bump, err := NewBUMPFromMerkleTreeAndIndex(1575794, merkles, uint64(txIndex))
 		require.NoError(t, err)
 		b2, err := bump.String()
 		require.NoError(t, err)
@@ -176,7 +176,7 @@ func TestOnlySpecifiedPathsStored(t *testing.T) {
 	merkles := BuildMerkleTreeStoreChainHash(chainHashBlock)
 
 	for idx := range blockTxExample {
-		bump, err := NewBUMPFromMerkleTreeAndIndex(1575794, merkles, uint64(idx)) //nolint:gosec // idx is bounded by block tx count
+		bump, err := NewBUMPFromMerkleTreeAndIndex(1575794, merkles, uint64(idx))
 		require.NoError(t, err)
 		totalHashes := 0
 		for _, level := range bump.Path {
