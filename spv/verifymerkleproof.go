@@ -275,9 +275,7 @@ func parseBinaryMerkleProof(proof []byte) (*merkleProofBinary, error) {
 	}
 
 	// txOrID is the next txLength bytes after 1st byte + index size (+ txLength size)
-	//nolint:gosec // txLength validated above
 	mpb.txOrID = hex.EncodeToString(bt.ReverseBytes(proof[offset : offset+int(txLength)]))
-	//nolint:gosec // txLength validated above
 	offset += int(txLength)
 
 	switch mpb.flags & targetTypeFlags {
@@ -303,7 +301,7 @@ func parseBinaryMerkleProof(proof []byte) (*merkleProofBinary, error) {
 		return nil, ErrInvalidProof
 	}
 
-	for i := 0; i < int(nodeCount); i++ { //nolint:gosec // nodeCount is from VarInt and bounded
+	for i := 0; i < int(nodeCount); i++ {
 		t := proof[offset]
 		offset++
 

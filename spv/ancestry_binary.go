@@ -99,7 +99,7 @@ func parseChunk(b []byte, start uint64) (binaryChunk, uint64) {
 	offset++
 	l, size := bt.NewVarIntFromBytes(b[offset:])
 	// Safe conversion: size from VarInt is bounded by max varint size (9 bytes)
-	offset += uint64(size) //nolint:gosec // size bounded by max varint size
+	offset += uint64(size)
 	chunk := binaryChunk{
 		ContentType: typeOfNextData,
 		Data:        b[offset : offset+uint64(l)],
@@ -124,7 +124,7 @@ func parseMapiCallbacks(b []byte) ([]*bc.MapiCallback, error) {
 	for allBinary > internalOffset {
 		l, size := bt.NewVarIntFromBytes(b[internalOffset:])
 		// Safe conversion: size from VarInt is bounded by max varint size (9 bytes)
-		internalOffset += uint64(size) //nolint:gosec // size bounded by max varint size
+		internalOffset += uint64(size)
 		response := b[internalOffset : internalOffset+uint64(l)]
 		internalOffset += uint64(l)
 		responses = append(responses, response)
