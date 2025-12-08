@@ -257,7 +257,7 @@ func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.H
 	levelOffset := 0
 	for height := 0; height < treeHeight; height++ {
 		// Safe conversion: height is bounded by treeHeight (max ~32 for Bitcoin blocks)
-		heightUint := uint(height)
+		heightUint := uint(height) //nolint:gosec // G115: Safe conversion - height is bounded by treeHeight
 		offset := txIndex >> heightUint
 		if offset&1 == 0 {
 			// offset is even we need to use the hash to the right.
@@ -269,7 +269,7 @@ func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.H
 		}
 		thisLeaf := leaf{Offset: &offset}
 		// Safe conversion: offset is bounded by merkle tree size
-		offsetInt := int(offset)
+		offsetInt := int(offset) //nolint:gosec // G115: Safe conversion - offset is bounded by merkle tree size
 		hash := merkleTree[levelOffset+offsetInt]
 		if hash.IsEqual(nil) {
 			thisLeaf.Duplicate = &truePointer

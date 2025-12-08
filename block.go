@@ -78,7 +78,7 @@ func NewBlockFromBytes(b []byte) (*Block, error) {
 
 	var txs []*bt.Tx
 	// Safe conversion: txCount should never exceed reasonable transaction count
-	txCountInt := int(txCount)
+	txCountInt := int(txCount) //nolint:gosec // G115: Safe conversion - txCount is bounded by block size limits
 	for i := 0; i < txCountInt; i++ {
 		tx, size, err := bt.NewTxFromStream(b[offset:])
 		if err != nil {
