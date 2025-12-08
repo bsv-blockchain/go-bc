@@ -126,7 +126,7 @@ func parseCrunchyNutFlakesRecursively(b []byte, offset *uint64, eCurrent *Envelo
 	*offset++
 	l, size := bt.NewVarIntFromBytes(b[*offset:])
 	// Safe conversion: size from VarInt is bounded by max varint size (9 bytes)
-	*offset += uint64(size)
+	*offset += uint64(size) //nolint:gosec // G115: Safe conversion - size is bounded by VarInt max size (9 bytes)
 	switch typeOfNextData {
 	case flagTx:
 		tx, err := bt.NewTxFromBytes(b[*offset : *offset+uint64(l)])
@@ -293,7 +293,7 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 	var flakes [][]byte
 	for ok := true; ok; ok = allBinary > offset {
 		l, size := bt.NewVarIntFromBytes(b[offset:])
-		offset += uint64(size)
+		offset += uint64(size) //nolint:gosec // G115: Safe conversion - size is bounded by VarInt max size (9 bytes)
 		flake := b[offset : offset+uint64(l)]
 		offset += uint64(l)
 		flakes = append(flakes, flake)
@@ -501,7 +501,7 @@ func parseSpecialKMapi(b []byte) ([]bc.MapiCallback, error) {
 	var responses [][]byte
 	for ok := true; ok; ok = allBinary > internalOffset {
 		l, size := bt.NewVarIntFromBytes(b[internalOffset:])
-		internalOffset += uint64(size)
+		internalOffset += uint64(size) //nolint:gosec // G115: Safe conversion - size is bounded by VarInt max size (9 bytes)
 		response := b[internalOffset : internalOffset+uint64(l)]
 		internalOffset += uint64(l)
 		responses = append(responses, response)

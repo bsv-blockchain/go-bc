@@ -29,7 +29,7 @@ func NewMerklePathFromBytes(bytes []byte) (*MerklePath, error) {
 
 	// parse each leaf from the binary path
 	// Safe conversion: nLeaves represents path length which is bounded
-	nLeavesInt := int(nLeaves)
+	nLeavesInt := int(nLeaves) //nolint:gosec // G115: Safe conversion - nLeaves is bounded by path length
 	for k := 0; k < nLeavesInt; k++ {
 		leaf := bytes[offset : offset+32]
 		mp.Path = append(mp.Path, StringFromBytesReverse(leaf))
@@ -126,7 +126,7 @@ func getPathElements(txIndex int, hashes []string) []string {
 // GetTxMerklePath with a merkle tree we calculate the merkle path for a given transaction.
 func GetTxMerklePath(txIndex int, merkleTree []string) *MerklePath {
 	merklePath := &MerklePath{
-		Index: uint64(txIndex),
+		Index: uint64(txIndex), //nolint:gosec // G115: Safe conversion - txIndex is validated by caller
 		Path:  nil,
 	}
 
