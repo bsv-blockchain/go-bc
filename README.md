@@ -313,7 +313,7 @@ Read the [AI Usage & Assistant Guidelines](.github/tech-conventions/ai-complianc
 ## 👥 Maintainers
 | [<img src="https://github.com/icellan.png" height="50" alt="Siggi" />](https://github.com/icellan) | [<img src="https://github.com/galt-tr.png" height="50" alt="Galt" />](https://github.com/galt-tr) | [<img src="https://github.com/mrz1836.png" height="50" alt="MrZ" />](https://github.com/mrz1836) |
 |:--------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|
-|                                [Siggi](https://github.com/icellan)                                 |                                [Galt](https://github.com/galt-tr)                                 |                                [MrZ](https://github.com/mrz1836)                                 |
+|                                [Siggi](https://github.com/icellan)                                 |                                [Dylan](https://github.com/galt-tr)                                 |                                [MrZ](https://github.com/mrz1836)                                 |
 
 <br/>
 
