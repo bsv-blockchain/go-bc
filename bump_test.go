@@ -46,7 +46,7 @@ var blockTxExample = []string{
 }
 
 func TestNewBUMPFromMerkleTreeWithOnlyOneTxid(t *testing.T) {
-	chainHashBlock := make([]*chainhash.Hash, 0)
+	chainHashBlock := make([]*chainhash.Hash, 0, 1)
 	hash, err := chainhash.NewHashFromHex(txidSmallBlock)
 	require.NoError(t, err)
 	chainHashBlock = append(chainHashBlock, hash)
@@ -59,7 +59,7 @@ func TestNewBUMPFromMerkleTreeWithOnlyOneTxid(t *testing.T) {
 }
 
 func TestNewBUMPFromMerkleTree(t *testing.T) {
-	chainHashBlock := make([]*chainhash.Hash, 0)
+	chainHashBlock := make([]*chainhash.Hash, 0, len(blockTxExample))
 	for _, txid := range blockTxExample {
 		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
@@ -100,7 +100,7 @@ func TestCalculateRootGivenTxid(t *testing.T) {
 }
 
 func TestTestnetCalculateRootGivenTxid(t *testing.T) {
-	chainHashBlock := make([]*chainhash.Hash, 0)
+	chainHashBlock := make([]*chainhash.Hash, 0, len(testnetBlockExample))
 	for _, txid := range testnetBlockExample {
 		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
@@ -152,7 +152,7 @@ func TestNotEnoughLeavesInHeight(t *testing.T) {
 }
 
 func TestTxIDs(t *testing.T) {
-	chainHashBlock := make([]*chainhash.Hash, 0)
+	chainHashBlock := make([]*chainhash.Hash, 0, len(testnetBlockExample))
 	for _, txid := range testnetBlockExample {
 		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)
@@ -167,7 +167,7 @@ func TestTxIDs(t *testing.T) {
 }
 
 func TestOnlySpecifiedPathsStored(t *testing.T) {
-	chainHashBlock := make([]*chainhash.Hash, 0)
+	chainHashBlock := make([]*chainhash.Hash, 0, len(blockTxExample))
 	for _, txid := range blockTxExample {
 		hash, err := chainhash.NewHashFromHex(txid)
 		require.NoError(t, err)

@@ -30,7 +30,8 @@ func (b *Block) String() string {
 //
 // See https://btcinformation.org/en/developer-reference#serialized-blocks
 func (b *Block) Bytes() []byte {
-	var bytes []byte
+	// Preallocate: 80 (header) + 9 (max varint) + estimated tx bytes
+	bytes := make([]byte, 0, 80+9+len(b.Txs)*250)
 
 	bytes = append(bytes, b.BlockHeader.Bytes()...)
 

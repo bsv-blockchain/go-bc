@@ -84,7 +84,8 @@ func (mp *MerkleProof) Bytes() ([]byte, error) {
 
 	// ignore proofType and compositeType for this version
 
-	var bytes []byte
+	// Preallocate: 1 (flags) + 9 (index varint max) + 9 (txLength varint max) + txOrID + target + 1 (nodeCount) + nodes
+	bytes := make([]byte, 0, 20+len(txOrID)+len(target)+len(nodes))
 	bytes = append(bytes, flags)
 	bytes = append(bytes, index.Bytes()...)
 	bytes = append(bytes, txLength...)
