@@ -54,7 +54,8 @@ func (mp *MerklePath) Bytes() ([]byte, error) {
 	nLeaves := bt.VarInt(len(mp.Path))
 
 	// the first two arguments in merkle path binary format are index of the transaction and number of leaves.
-	var bytes []byte
+	// Preallocate: 2 varints (up to 9 bytes each) + 32 bytes per path element
+	bytes := make([]byte, 0, 18+len(mp.Path)*32)
 	bytes = append(bytes, index.Bytes()...)
 	bytes = append(bytes, nLeaves.Bytes()...)
 

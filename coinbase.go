@@ -50,7 +50,7 @@ func BuildCoinbase(c1, c2 []byte, extraNonce1, extraNonce2 string) []byte {
 	e1, _ := hex.DecodeString(extraNonce1)
 	e2, _ := hex.DecodeString(extraNonce2)
 
-	var a []byte
+	a := make([]byte, 0, len(c1)+len(e1)+len(e2)+len(c2))
 	a = append(a, c1...)
 	a = append(a, e1...)
 	a = append(a, e2...)

@@ -43,7 +43,7 @@ func (e *Envelope) ParentTX(txID string) (*bt.Tx, error) {
 
 // CrunchyNutBytes takes a spvEnvelope struct and returns a pointer to the serialized bytes.
 func (e *Envelope) CrunchyNutBytes() (*[]byte, error) {
-	flake := make([]byte, 0)
+	flake := make([]byte, 0, 1)
 
 	// Binary format version 1
 	flake = append(flake, 1)
@@ -202,7 +202,7 @@ func flagType(flags byte) string {
 
 // SpecialKBytes takes a spvEnvelope struct and returns a pointer to the serialized bytes.
 func (e *Envelope) SpecialKBytes() (*[]byte, error) {
-	flake := make([]byte, 0)
+	flake := make([]byte, 0, 1)
 
 	// Binary format version 1
 	flake = append(flake, 1)

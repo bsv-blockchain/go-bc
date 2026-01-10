@@ -65,7 +65,8 @@ func (bh *BlockHeader) String() string {
 //
 // See https://en.bitcoin.it/wiki/Block_hashing_algorithm
 func (bh *BlockHeader) Bytes() []byte {
-	var bytes []byte
+	// Block header is always 80 bytes
+	bytes := make([]byte, 0, 80)
 	bytes = append(bytes, UInt32ToBytes(bh.Version)...)
 	bytes = append(bytes, bt.ReverseBytes(bh.HashPrevBlock)...)
 	bytes = append(bytes, bt.ReverseBytes(bh.HashMerkleRoot)...)
