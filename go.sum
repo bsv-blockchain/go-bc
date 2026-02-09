@@ -1,5 +1,5 @@
-github.com/bsv-blockchain/go-bt/v2 v2.5.2 h1:CIjW+7tvaOSUXlKSrBt0fgJBE/YyOTuHpbPHAFxhFZc=
-github.com/bsv-blockchain/go-bt/v2 v2.5.2/go.mod h1:LA9r0UBe5BOyXxIS8oOGfPVmmvpOoxs0pxkFDHmeTSY=
+github.com/bsv-blockchain/go-bt/v2 v2.5.3 h1:QfVNnlXl4r+Sq+tfG8likv29b85gWcAq6v/IzvytAvY=
+github.com/bsv-blockchain/go-bt/v2 v2.5.3/go.mod h1:IW4ejL7cKDj3qRb+nZppWeu3/RzgLbDzsnzQrPmhUHc=
 github.com/bsv-blockchain/go-sdk v1.2.17 h1:neQ/fxFL01yPFe3gbMDyBmIYqk+Vm7AQY1wtGsYQFFI=
 github.com/bsv-blockchain/go-sdk v1.2.17/go.mod h1:QWYwia7QSPB8+sLWyVldsIg0wPPzvEmXL5wGAT0dgaA=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
