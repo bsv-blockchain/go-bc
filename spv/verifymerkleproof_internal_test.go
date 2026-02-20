@@ -40,7 +40,7 @@ func TestVerifyProof(t *testing.T) {
 	index := 12
 	nodes := []string{"b9ef07a62553ef8b0898a79c291b92c60f7932260888bde0dab2dd2610d8668e", "0fc1c12fb1b57b38140442927fbadb3d1e5a5039a5d6db355ea25486374f104d", "60b0e75dd5b8d48f2d069229f20399e07766dd651ceeed55ee3c040aa2812547", "c0d8dbda46366c2050b430a05508a3d96dc0ed55aea685bb3d9a993f8b97cc6f", "391e62b3419d8a943f7dbc7bddc90e30ec724c033000dc0c8872253c27b03a42"}
 
-	valid, isLastInTree, err := verifyProof(c, merkleRoot, uint64(index), nodes) //nolint:gosec // G115: Safe conversion - index is a test constant
+	valid, isLastInTree, err := verifyProof(c, merkleRoot, uint64(index), nodes)
 
 	require.NoError(t, err)
 	assert.False(t, isLastInTree)

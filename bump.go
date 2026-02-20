@@ -129,7 +129,7 @@ func (bump *BUMP) Bytes() ([]byte, error) {
 	var bytes []byte
 	bytes = append(bytes, bt.VarInt(bump.BlockHeight).Bytes()...)
 	treeHeight := len(bump.Path)
-	bytes = append(bytes, byte(treeHeight))
+	bytes = append(bytes, byte(treeHeight)) //nolint:gosec // G115: Safe conversion - treeHeight is bounded by merkle tree depth
 	for level := 0; level < treeHeight; level++ {
 		nLeaves := len(bump.Path[level])
 		bytes = append(bytes, bt.VarInt(nLeaves).Bytes()...)
@@ -256,8 +256,7 @@ func NewBUMPFromMerkleTreeAndIndex(blockHeight uint64, merkleTree []*chainhash.H
 
 	levelOffset := 0
 	for height := 0; height < treeHeight; height++ {
-		// Safe conversion: height is bounded by treeHeight (max ~32 for Bitcoin blocks)
-		heightUint := uint(height) //nolint:gosec // G115: Safe conversion - height is bounded by treeHeight
+		heightUint := uint(height)
 		offset := txIndex >> heightUint
 		if offset&1 == 0 {
 			// offset is even we need to use the hash to the right.
