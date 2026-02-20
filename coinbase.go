@@ -118,8 +118,7 @@ func makeCoinbaseOutputTransactions(coinbaseValue uint64, defaultWitnessCommitme
 		buf = append(buf, minerIDBytes...)
 	}
 
-	// Safe conversion: numberOfTransactions is small and bounded
-	buf = append(bt.VarInt(uint64(numberOfTransactions)).Bytes(), buf...) //nolint:gosec // G115: Safe conversion - numberOfTransactions is bounded
+	buf = append(bt.VarInt(uint64(numberOfTransactions)).Bytes(), buf...)
 	return buf, nil
 }
 
@@ -150,8 +149,7 @@ func makeCoinbase1(height uint32, coinbaseText string) []byte {
 	buf = append(buf, make([]byte, 32)...)               // Transaction hash - 4 bytes all bits are zero
 	buf = append(buf, []byte{0xff, 0xff, 0xff, 0xff}...) // Coinbase data size - 4 bytes - All bits are ones: 0xFFFFFFFF (ffffffff)
 
-	// Safe conversion: length is bounded to 100 bytes max
-	buf = append(buf, bt.VarInt(uint64(len(arbitraryData)+spaceForExtraNonce)).Bytes()...) //nolint:gosec // G115: Safe conversion - length is bounded to 100 bytes max
+	buf = append(buf, bt.VarInt(uint64(len(arbitraryData)+spaceForExtraNonce)).Bytes()...)
 	buf = append(buf, arbitraryData...)
 
 	return buf

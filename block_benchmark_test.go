@@ -28,7 +28,7 @@ func BenchmarkNewBUMPFromMerkleTreeAndIndex(b *testing.B) {
 	b.ResetTimer()
 
 	for idx := 0; idx < transactions; idx++ {
-		bump, err := NewBUMPFromMerkleTreeAndIndex(850000, merkles, uint64(idx)) //nolint:gosec // G115: Safe conversion - idx is bounded by test
+		bump, err := NewBUMPFromMerkleTreeAndIndex(850000, merkles, uint64(idx))
 		require.NoError(b, err)
 		totalHashes := 0
 		for _, level := range bump.Path {

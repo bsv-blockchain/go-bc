@@ -91,7 +91,7 @@ func (mp *MerkleProof) Bytes() ([]byte, error) {
 	bytes = append(bytes, txLength...)
 	bytes = append(bytes, txOrID...)
 	bytes = append(bytes, target...)
-	bytes = append(bytes, byte(nodeCount))
+	bytes = append(bytes, byte(nodeCount)) //nolint:gosec // G115: Safe conversion - nodeCount is bounded by merkle proof structure
 	bytes = append(bytes, nodes...)
 
 	return bytes, nil
