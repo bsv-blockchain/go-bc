@@ -156,7 +156,8 @@ func makeCoinbase1(height uint32, coinbaseText string) []byte {
 }
 
 func makeCoinbase2(ot []byte) []byte {
-	sq := []byte{0xff, 0xff, 0xff, 0xff}
+	sq := make([]byte, 0, 4+len(ot))
+	sq = append(sq, 0xff, 0xff, 0xff, 0xff)
 	lt := make([]byte, 4)
 
 	ot = append(sq, ot...)
