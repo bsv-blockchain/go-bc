@@ -3,7 +3,7 @@ module github.com/bsv-blockchain/go-bc
 go 1.25.0
 
 require (
-	github.com/bsv-blockchain/go-bt/v2 v2.6.2
+	github.com/bsv-blockchain/go-bt/v2 v2.6.3
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
 )
