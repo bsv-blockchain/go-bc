@@ -331,7 +331,7 @@ func NewSpecialKEnvelopeFromBytes(b []byte) (*Envelope, error) {
 				}
 			case mcbs := <-mapiCallbackChan:
 				if len(mcbs) > 0 {
-					txid := (mcbs)[0].CallbackTxID
+					txid := mcbs[0].CallbackTxID
 					mapiCallbacks[txid] = mcbs
 				}
 			case <-done:
