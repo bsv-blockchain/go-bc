@@ -111,9 +111,6 @@ on:
       CODECOV_TOKEN:
         description: "Codecov token for uploading coverage (required when coverage-provider is codecov)"
         required: false
-      GH_PAT_TOKEN:
-        description: "Personal access token for enhanced GitHub API access (optional, falls back to github-token)"
-        required: false
 
 # Security: Restrict default permissions (jobs must explicitly request what they need)
 permissions: {}
@@ -218,6 +215,7 @@ jobs:
     permissions:
       contents: write # Write repository content and push to gh-pages branch for coverage processing
       pull-requests: write # Required: Coverage workflow needs to create PR comments
+      issues: write # Required: go-coverage posts/updates PR comments via the issues comments API
       pages: write # Required: Coverage workflow needs to deploy to GitHub Pages
       id-token: write # Required: Coverage workflow needs GitHub Pages authentication
       statuses: write # Required: Coverage workflow needs to create commit status checks
@@ -234,5 +232,5 @@ jobs:
       go-sum-file: ${{ inputs.go-sum-file }}
       coverage-provider: ${{ inputs.coverage-provider }}
     secrets:
-      github-token: ${{ secrets.GH_PAT_TOKEN != '' && secrets.GH_PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      github-token: ${{ secrets.github-token }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
